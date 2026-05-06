@@ -21,13 +21,13 @@
   text-rendering: optimizeLegibility;
 }
 
-/* Figma-like hero style */
+/* hero style */
 .hero-title {
   font-size: 32px;
   font-weight: 900;
   font-style: italic;
   text-transform: uppercase;
   text-shadow: 0 4px 4px rgb(0 0 0 / 0.25);
-  /* Figma has leading-trim/text-edge which CSS doesn't support; emulate with tight line-height */
+  /* leading-trim/text-edge isn't in CSS yet; emulate with tight line-height */
   line-height: 1.1;
 }

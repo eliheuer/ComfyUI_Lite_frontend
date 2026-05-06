@@ -180,11 +180,9 @@ This project uses **pnpm**. Always prefer scripts defined in `package.json` (e.g
 24. Do not use function expressions if it's possible to use function declarations instead
 25. Watch out for [Code Smells](https://wiki.c2.com/?CodeSmell) and refactor to avoid them
 
-## Design Standards
+## Design System
 
-Before implementing any user-facing feature, consult the [Comfy Design Standards](https://www.figma.com/design/QreIv5htUaSICNuO2VBHw0/Comfy-Design-Standards) Figma file. Use the Figma MCP to fetch it live — the file is the single source of truth and may be updated by designers at any time.
-
-See `docs/guidance/design-standards.md` for Figma file keys, section node IDs, and component references.
+The design system lives in code. See `.agents/context/eli/theme-system-design.md` for the design and `.agents/context/eli/theme-system-research.md` for the rationale. **The repo is the source of truth.** Figma may be set up to mirror these tokens (one-way, repo → Figma) for design exploration, but design changes start in code, not in Figma.
 
 ## Testing Guidelines
 
@@ -233,7 +231,6 @@ See @docs/testing/\*.md for detailed patterns.
 - shadcn/vue: <https://www.shadcn-vue.com/>
 - Reka UI: <https://reka-ui.com/>
 - PrimeVue: <https://primevue.org>
-- Comfy Design Standards: <https://www.figma.com/design/QreIv5htUaSICNuO2VBHw0/Comfy-Design-Standards>
 - ComfyUI: <https://docs.comfy.org>
 - Electron: <https://www.electronjs.org/docs/latest/>
 - Wiki: <https://deepwiki.com/Comfy-Org/ComfyUI_frontend/1-overview>
