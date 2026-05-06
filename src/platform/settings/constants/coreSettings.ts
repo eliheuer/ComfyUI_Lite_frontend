@@ -1202,10 +1202,8 @@ export const CORE_SETTINGS: SettingParams[] = [
     type: 'boolean',
     tooltip:
       'Modern: DOM-based rendering with enhanced interactivity, native browser features, and updated visual design. Classic: Traditional canvas rendering.',
-    defaultValue: false,
-    defaultsByInstallVersion: { '1.41.0': isCloud || isDesktop },
+    defaultValue: true,
     sortOrder: 100,
-    experimental: true,
     versionAdded: '1.27.1'
   },
   {

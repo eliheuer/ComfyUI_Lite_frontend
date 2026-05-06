@@ -207,10 +207,13 @@ These are the constraints the design doc has to honor.
 - **Splash screen: do nothing.** Accept the brief flash on light-theme
   reloads. Eli's call: "the point of this is to make a lite version
   that is clean."
-- **V1 nodes are dropped from the fork.** This shrinks the LiteGraph
-  bridge (no per-node color constants needed for our own use; we still
-  set them as Tier 1 compat) and lets the six color picker components
-  per upstream #8024 be deleted along with V1.
+- **V2 nodes are the default; V1 stays as an escape hatch.** New users
+  get V2 (Vue-rendered) nodes via the upstream `Comfy.VueNodes.Enabled`
+  setting flipped to `true`. V1 (LiteGraph-canvas-rendered) is still
+  available via the toggle, so no V1 code is removed as part of the
+  theme rewrite. The LiteGraph bridge keeps setting all per-node color
+  constants both modes need. We'll revisit V1 removal only when V1
+  causes a real problem.
 
 ## Appendix — deeper upstream evidence
 

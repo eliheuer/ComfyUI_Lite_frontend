@@ -31,12 +31,13 @@ That's the whole system.
 These are the answers that shaped the rest of the doc; they're collected
 here so they're not buried in subsections.
 
-- **V1 nodes are dropped from the fork.** Only the Vue-rendered V2 nodes
-  (`src/renderer/extensions/vueNodes/...`) survive. The LiteGraph canvas
-  itself stays (it still renders the background, links, groups), but
-  per-node color constants like `LiteGraph.NODE_DEFAULT_BGCOLOR` no longer
-  matter for *us* — the bridge keeps setting them only as Tier 1
-  compatibility for any extension still drawing on the canvas.
+- **V2 nodes are the default; V1 stays as an escape hatch.** New users
+  get V2 (Vue-rendered) nodes via the upstream `Comfy.VueNodes.Enabled`
+  setting flipped to `true`. V1 (LiteGraph-canvas-rendered) is still
+  available via the toggle. No V1 code is removed as part of the theme
+  rewrite — we'll revisit removal only when V1 causes a real problem.
+  The LiteGraph bridge keeps setting all per-node color constants both
+  modes need.
 - **Six themes, no system-follow.** `dark` (default), `light`, `gray`,
   `strawberry` (light-mood, pink-warm), `mint` (light-mood, cool green),
   `campfire` (dark-mood, amber-warm). No `prefers-color-scheme`
@@ -179,11 +180,11 @@ the shim goes with it.)
 
 ## Bridges
 
-### LiteGraph bridge (smaller because V1 is dead)
+### LiteGraph bridge
 
-LiteGraph still renders the canvas background, links, and groups, so
-the bridge has work to do — but no per-node color constants are needed
-since V2 nodes are Vue components reading CSS vars directly.
+LiteGraph renders the canvas background, links, groups, and (in V1
+mode) the nodes themselves. The bridge sets the canvas-level colors
+plus the per-node constants both modes need.
 
 ```ts
 // src/services/themeBridge.ts
@@ -288,7 +289,6 @@ preserve the disease.
 | `Comfy.CustomColorPalettes` setting | no-op (key tolerated, value ignored) |
 | All palette JSONs (`dark.json`, `light.json`, `arc.json`, `nord.json`, `github.json`, `solarized.json`) | replaced by tokens.css blocks |
 | Custom palette import/export UI | removed |
-| The six `*ColorPicker*` components per upstream #8024 | mostly V1-canvas-rendered; deleted along with V1 |
 
 `Comfy.ColorPalette` setting key **stays** but its accepted values
 become `'dark' | 'light' | 'gray' | 'strawberry' | 'mint' | 'campfire'`.
@@ -308,11 +308,6 @@ When the new system lands:
 - `src/constants/coreColorPalettes.ts`
 - `src/assets/palettes/*.json` (all six)
 - `src/platform/settings/components/ColorPaletteMessage.vue`
-- `src/components/common/ColorCustomizationSelector.vue` (V1-related)
-- `src/components/common/FormColorPicker.vue` (if V1 only)
-- `src/components/graph/selectionToolbox/ColorPickerButton.vue` (V1)
-- `src/components/rightSidePanel/settings/SetNodeColor.vue` (V1)
-- `src/composables/graph/useNodeCustomization.ts` (V1)
 - `packages/design-system/src/css/_palette.css`
 - `packages/design-system/src/css/style.css` (the ~1900-line one) —
   most of it; salvage genuinely-needed bits (font face declarations,
@@ -320,8 +315,7 @@ When the new system lands:
 
 The replacement is `src/styles/tokens.css` +
 `src/composables/useColorScheme.ts` + `src/services/themeBridge.ts` +
-`src/components/ColorSchemeMenu.vue`. Net delta: roughly **−4000 to
-−5000 lines** including the V1 color picker components.
+`src/components/ColorSchemeMenu.vue`. Net delta: roughly **−3000 lines**.
 
 ## Theme menu UI
 
