@@ -31,13 +31,15 @@ That's the whole system.
 These are the answers that shaped the rest of the doc; they're collected
 here so they're not buried in subsections.
 
-- **V2 nodes are the default; V1 stays as an escape hatch.** New users
-  get V2 (Vue-rendered) nodes via the upstream `Comfy.VueNodes.Enabled`
-  setting flipped to `true`. V1 (LiteGraph-canvas-rendered) is still
-  available via the toggle. No V1 code is removed as part of the theme
-  rewrite — we'll revisit removal only when V1 causes a real problem.
-  The LiteGraph bridge keeps setting all per-node color constants both
-  modes need.
+- **V1 nodes remain the default; V2 is opt-in via the toggle.**
+  Attempted to default `Comfy.VueNodes.Enabled` to `true` but it
+  broke app mode (layout collapsed, panels empty). App mode's V2 path
+  is supposed to delegate selection chrome to `AppInput` / `AppOutput`
+  Vue components per the comment at the top of `AppBuilder.vue`, but
+  those components either aren't wired or aren't complete. Reverted
+  the default. V2 + app-mode integration is its own scoped task,
+  separate from the theme rewrite. The LiteGraph bridge keeps setting
+  all per-node color constants both modes need.
 - **Six themes, no system-follow.** `dark` (default), `light`, `gray`,
   `strawberry` (light-mood, pink-warm), `mint` (light-mood, cool green),
   `campfire` (dark-mood, amber-warm). No `prefers-color-scheme`
@@ -77,15 +79,15 @@ Two prefixes only:
 
 Within `--color-*`, name by **role**, not by appearance:
 
-| ✅ Role-named         | ❌ Appearance-named   |
-|----------------------|-----------------------|
-| `--color-bg`         | `--color-charcoal-800`|
-| `--color-surface`    | `--color-gray-700`    |
-| `--color-text`       | `--color-white`       |
-| `--color-text-muted` | `--color-gray-400`    |
-| `--color-border`     | `--color-gray-600`    |
-| `--color-action`     | `--color-yellow-400`  |
-| `--color-danger`     | `--color-red-500`     |
+| ✅ Role-named        | ❌ Appearance-named    |
+| -------------------- | ---------------------- |
+| `--color-bg`         | `--color-charcoal-800` |
+| `--color-surface`    | `--color-gray-700`     |
+| `--color-text`       | `--color-white`        |
+| `--color-text-muted` | `--color-gray-400`     |
+| `--color-border`     | `--color-gray-600`     |
+| `--color-action`     | `--color-yellow-400`   |
+| `--color-danger`     | `--color-red-500`      |
 
 Role names survive the dark↔light flip without renaming. A token called
 `--color-charcoal-800` becomes a lie when the light theme sets it to
@@ -100,22 +102,32 @@ keyed by `[data-theme="…"]` on `<html>`:
 /* tokens.css — sketch only; final values tuned during step 1 */
 :root {
   /* dark — the default */
-  --color-bg:           #0e0f12;
-  --color-surface:      #16181d;
-  --color-surface-alt:  #1d2027;
-  --color-text:         #e7e9ee;
-  --color-text-muted:   #8b909b;
-  --color-border:       #2a2d35;
-  --color-action:       #f5d800;
-  --color-danger:       #e35454;
+  --color-bg: #0e0f12;
+  --color-surface: #16181d;
+  --color-surface-alt: #1d2027;
+  --color-text: #e7e9ee;
+  --color-text-muted: #8b909b;
+  --color-border: #2a2d35;
+  --color-action: #f5d800;
+  --color-danger: #e35454;
   /* …rest of the ~30-token list… */
 }
 
-[data-theme="light"]      { /* neutral light */     }
-[data-theme="gray"]       { /* mid-neutral grey, eye-saving */ }
-[data-theme="strawberry"] { /* light, warm pink/red */ }
-[data-theme="mint"]       { /* light, cool mint green */ }
-[data-theme="campfire"]   { /* dark, warm amber/orange */ }
+[data-theme='light'] {
+  /* neutral light */
+}
+[data-theme='gray'] {
+  /* mid-neutral grey, eye-saving */
+}
+[data-theme='strawberry'] {
+  /* light, warm pink/red */
+}
+[data-theme='mint'] {
+  /* light, cool mint green */
+}
+[data-theme='campfire'] {
+  /* dark, warm amber/orange */
+}
 ```
 
 Every block defines the same set of tokens. No theme has tokens the
@@ -197,25 +209,29 @@ const readVar = (name: string) =>
 
 function applyToLiteGraph(canvas /* LGraphCanvas */) {
   canvas.clear_background_color = readVar('--color-canvas-bg')
-  LiteGraph.LINK_COLOR          = readVar('--color-border')
+  LiteGraph.LINK_COLOR = readVar('--color-border')
   // Tier 1 compat — keep setting the per-node constants any extension
   // drawing on the canvas might still read.
   LiteGraph.NODE_DEFAULT_BGCOLOR = readVar('--color-node-bg')
-  LiteGraph.NODE_TITLE_COLOR     = readVar('--color-node-header')
-  LiteGraph.NODE_TEXT_COLOR      = readVar('--color-node-text')
-  LiteGraph.WIDGET_BGCOLOR       = readVar('--color-surface-alt')
+  LiteGraph.NODE_TITLE_COLOR = readVar('--color-node-header')
+  LiteGraph.NODE_TEXT_COLOR = readVar('--color-node-text')
+  LiteGraph.WIDGET_BGCOLOR = readVar('--color-surface-alt')
 }
 
 export function installThemeBridge(canvas /* LGraphCanvas */) {
   const { theme } = useColorScheme()
-  watch(theme, () => {
-    applyToLiteGraph(canvas)
-    canvas.draw(true, true)
-  }, { immediate: true })
+  watch(
+    theme,
+    () => {
+      applyToLiteGraph(canvas)
+      canvas.draw(true, true)
+    },
+    { immediate: true }
+  )
 }
 ```
 
-This is the *only* place LiteGraph's color constants are touched.
+This is the _only_ place LiteGraph's color constants are touched.
 
 ### `litegraph.css` rewrite
 
@@ -257,15 +273,15 @@ one PR is a giant churn diff with no architectural payoff.
    Do not use in new code; reference --color-* roles directly.
    Removable in a future major once extension authors have migrated. */
 :root {
-  --fg-color:                 var(--color-text);
-  --bg-color:                 var(--color-bg);
-  --border-color:             var(--color-border);
-  --comfy-menu-bg:            var(--color-surface);
-  --comfy-menu-secondary-bg:  var(--color-surface-alt);
-  --comfy-input-bg:           var(--color-surface-alt);
-  --input-text:               var(--color-text);
-  --tr-odd-bg-color:          var(--color-surface);
-  --tr-even-bg-color:         var(--color-surface-alt);
+  --fg-color: var(--color-text);
+  --bg-color: var(--color-bg);
+  --border-color: var(--color-border);
+  --comfy-menu-bg: var(--color-surface);
+  --comfy-menu-secondary-bg: var(--color-surface-alt);
+  --comfy-input-bg: var(--color-surface-alt);
+  --input-text: var(--color-text);
+  --tr-odd-bg-color: var(--color-surface);
+  --tr-even-bg-color: var(--color-surface-alt);
 }
 ```
 
@@ -278,17 +294,17 @@ keep working unchanged.
 
 ### Tier 2 — break, with a one-page migration note
 
-These removals are the *point* of the rewrite; preserving them would
+These removals are the _point_ of the rewrite; preserving them would
 preserve the disease.
 
-| Removed surface | Replacement |
-|-----------------|-------------|
-| `Pinia colorPaletteStore` | none — extensions wanting the active theme read `document.documentElement.dataset.theme` |
-| `services/colorPaletteService` | none — the bridge runs internally, no public API |
-| `colorPaletteSchema` (Zod) and the `node_slot` / `litegraph_base` / `comfy_base` JSON shape | none — themes are CSS, not JSON |
-| `Comfy.CustomColorPalettes` setting | no-op (key tolerated, value ignored) |
-| All palette JSONs (`dark.json`, `light.json`, `arc.json`, `nord.json`, `github.json`, `solarized.json`) | replaced by tokens.css blocks |
-| Custom palette import/export UI | removed |
+| Removed surface                                                                                         | Replacement                                                                              |
+| ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `Pinia colorPaletteStore`                                                                               | none — extensions wanting the active theme read `document.documentElement.dataset.theme` |
+| `services/colorPaletteService`                                                                          | none — the bridge runs internally, no public API                                         |
+| `colorPaletteSchema` (Zod) and the `node_slot` / `litegraph_base` / `comfy_base` JSON shape             | none — themes are CSS, not JSON                                                          |
+| `Comfy.CustomColorPalettes` setting                                                                     | no-op (key tolerated, value ignored)                                                     |
+| All palette JSONs (`dark.json`, `light.json`, `arc.json`, `nord.json`, `github.json`, `solarized.json`) | replaced by tokens.css blocks                                                            |
+| Custom palette import/export UI                                                                         | removed                                                                                  |
 
 `Comfy.ColorPalette` setting key **stays** but its accepted values
 become `'dark' | 'light' | 'gray' | 'strawberry' | 'mint' | 'campfire'`.
@@ -334,7 +350,7 @@ depend on (Tier 1 aliases) while replacing the architecture
 underneath. Single switchover, not a long transition.
 
 **Step 1 — foundation.** Build `tokens.css` (with all 6 theme blocks
-filled in *and* the Tier 1 alias block). Build the `useColorScheme`
+filled in _and_ the Tier 1 alias block). Build the `useColorScheme`
 composable. Build `themeBridge.ts`. Rewrite `litegraph.css` to use
 the new role-named vars. Rewire the PrimeVue Aura preset onto the
 new tokens. Old palette code stays alive in parallel — Tier 1 means

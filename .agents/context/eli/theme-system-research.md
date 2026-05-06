@@ -27,7 +27,7 @@ Full file-by-file inventory lives in the design doc; the headlines:
    PrimeVue at runtime from a `definePreset(Aura, ...)` call in `src/main.ts`.
 2. **Design-system semantic tokens** — `--color-layout-cell`,
    `--color-layout-text`, etc. in `packages/design-system/src/css/style.css`
-   (~1900 lines), partly *derived from* PrimeVue's variables.
+   (~1900 lines), partly _derived from_ PrimeVue's variables.
 3. **Comfy legacy CSS variables** — `--fg-color`, `--bg-color`,
    `--comfy-menu-bg` set imperatively on `documentElement.style` by
    `colorPaletteService.loadComfyColorPalette()`.
@@ -40,7 +40,7 @@ Full file-by-file inventory lives in the design doc; the headlines:
 A token can be set by any combination of 1–4, with 5 as a silent overrider.
 Changing a color often means hunting through three of them. Upstream sees this
 too: **issue [#11048](https://github.com/Comfy-Org/ComfyUI_frontend/issues/11048)
-"4 layered color systems create fragile overrides"** is *open*.
+"4 layered color systems create fragile overrides"** is _open_.
 
 ### A JSON palette schema with unused branches
 
@@ -56,7 +56,7 @@ fork's product framing, is YAGNI.
 ### No real light/dark toggle
 
 There is no dedicated dark/light switch. Light/dark is a side effect of which
-*palette* you select — the "light" palette has `light_theme: true`, which then
+_palette_ you select — the "light" palette has `light_theme: true`, which then
 toggles `.dark-theme` on `<body>` via a `watch()` in `GraphView.vue`. PrimeVue's
 dark selector is wired to `.dark-theme, :root:has(.dark-theme)` as a workaround
 for [primefaces/primevue#5515](https://github.com/primefaces/primevue/issues/5515).
@@ -79,24 +79,24 @@ real user/contributor friction (not imagined problems):
 ### Architectural — the layered system itself is the bug
 
 - **[#11048](https://github.com/Comfy-Org/ComfyUI_frontend/issues/11048)** —
-  "4 layered color systems create fragile overrides." *Open.* Same diagnosis
+  "4 layered color systems create fragile overrides." _Open._ Same diagnosis
   as ours; upstream knows but hasn't been able to unwind it.
 - **[#11031](https://github.com/Comfy-Org/ComfyUI_frontend/issues/11031)** —
-  "Four competing dialog/confirmation systems." *Closed.* Same disease pattern
+  "Four competing dialog/confirmation systems." _Closed._ Same disease pattern
   in a different surface — multi-layer drift is a structural risk, not a one-off.
 - **[#8024](https://github.com/Comfy-Org/ComfyUI_frontend/issues/8024)** —
-  "Refactor: Consolidate node color picker implementations." *Open.* Multiple
+  "Refactor: Consolidate node color picker implementations." _Open._ Multiple
   color-picker UIs because no single owner of color state.
 
 ### Migration away from PrimeVue is already underway upstream
 
 - **[#11081](https://github.com/Comfy-Org/ComfyUI_frontend/issues/11081)** —
-  TreeExplorer V1→V2 (PrimeVue → Reka UI). *Open.*
+  TreeExplorer V1→V2 (PrimeVue → Reka UI). _Open._
 - **[#11922](https://github.com/Comfy-Org/ComfyUI_frontend/issues/11922)** /
   **[#11923](https://github.com/Comfy-Org/ComfyUI_frontend/issues/11923)** —
-  migrate Tag off PrimeVue. *Open.*
+  migrate Tag off PrimeVue. _Open._
 - **[#10791](https://github.com/Comfy-Org/ComfyUI_frontend/issues/10791)** —
-  migrate Load3d slider controls off PrimeVue. *Open.*
+  migrate Load3d slider controls off PrimeVue. _Open._
 
 This fork can leapfrog: cut PrimeVue surface area aggressively, build on Reka
 UI + Tailwind 4 from day one. AGENTS.md already says "Avoid new usage of
@@ -105,13 +105,13 @@ PrimeVue components" — make that "no PrimeVue in new code, period."
 ### Light mode is a long-running sore spot
 
 - **[#5044](https://github.com/Comfy-Org/ComfyUI_frontend/issues/5044)** —
-  dark/light switch intermittently fails. *Open.*
+  dark/light switch intermittently fails. _Open._
 - **[#5557](https://github.com/Comfy-Org/ComfyUI_frontend/issues/5557)** —
-  light theme breaks node color editing. *Closed.*
+  light theme breaks node color editing. _Closed._
 - **[#6573](https://github.com/Comfy-Org/ComfyUI_frontend/issues/6573)** —
-  Milk White theme: text invisible. *Closed.*
+  Milk White theme: text invisible. _Closed._
 - **[#9806](https://github.com/Comfy-Org/ComfyUI_frontend/issues/9806)** —
-  chart colors don't react to theme changes. *Open.*
+  chart colors don't react to theme changes. _Open._
 
 A theme system where light mode is a tested, equal-status branch (not a "we
 mostly do dark, light kinda works") fixes the whole class.
@@ -120,11 +120,11 @@ mostly do dark, light kinda works") fixes the whole class.
 
 - **[#10288](https://github.com/Comfy-Org/ComfyUI_frontend/issues/10288)** —
   accessibility regressions: splash flash, motion, low-contrast UI, settings
-  readability. *Open.*
+  readability. _Open._
 - **[#5531](https://github.com/Comfy-Org/ComfyUI_frontend/issues/5531)** —
-  request for medium-grey / eye-saving theme. *Open.*
+  request for medium-grey / eye-saving theme. _Open._
 - **[#5558](https://github.com/Comfy-Org/ComfyUI_frontend/issues/5558)** —
-  disable zoom brightness variation. *Open.*
+  disable zoom brightness variation. _Open._
 
 A small, opinionated set of well-tuned themes (dark / light / high-contrast)
 beats an unbounded custom-palette feature where any user can produce an
@@ -154,7 +154,7 @@ These are the constraints the design doc has to honor.
    booleans tucked inside palette payloads.
 
 3. **In-code source of truth, no Figma round-trip.** Designers (i.e. me) edit
-   the CSS file. The repo *is* the design system. Figma can be a sketchpad,
+   the CSS file. The repo _is_ the design system. Figma can be a sketchpad,
    not a source of truth referenced by automation.
 
 4. **Drop user-created palettes for v1.** No import/export, no custom palette
@@ -165,7 +165,7 @@ These are the constraints the design doc has to honor.
 5. **Bridge to LiteGraph and PrimeVue, don't merge with them.** A single
    small adapter pushes the relevant tokens into LiteGraph runtime
    constants and PrimeVue's CSS variables when the theme changes. Both
-   bridges live in *one* file each so the seam is visible.
+   bridges live in _one_ file each so the seam is visible.
 
 6. **Litegraph CSS becomes token-driven.** No more hardcoded hex in
    `litegraph.css`. Either rewrite the file in this fork, or ship a small
@@ -207,13 +207,16 @@ These are the constraints the design doc has to honor.
 - **Splash screen: do nothing.** Accept the brief flash on light-theme
   reloads. Eli's call: "the point of this is to make a lite version
   that is clean."
-- **V2 nodes are the default; V1 stays as an escape hatch.** New users
-  get V2 (Vue-rendered) nodes via the upstream `Comfy.VueNodes.Enabled`
-  setting flipped to `true`. V1 (LiteGraph-canvas-rendered) is still
-  available via the toggle, so no V1 code is removed as part of the
-  theme rewrite. The LiteGraph bridge keeps setting all per-node color
-  constants both modes need. We'll revisit V1 removal only when V1
-  causes a real problem.
+- **V1 nodes remain the default; V2 is opt-in via the toggle.**
+  Attempted to default `Comfy.VueNodes.Enabled` to `true` but it
+  broke app mode badly: layout collapsed, panels empty, text clipped
+  in the side rail. Root cause: app mode's V2 path is supposed to
+  delegate selection chrome to `AppInput` / `AppOutput` Vue components
+  (see the comment at the top of `src/components/builder/AppBuilder.vue`),
+  but those components either aren't wired or aren't complete.
+  Reverted the default. V2 + app mode integration is its own
+  scoped task, separate from the theme rewrite. The LiteGraph bridge
+  keeps setting all per-node color constants both modes need.
 
 ## Appendix — deeper upstream evidence
 
@@ -239,10 +242,10 @@ Two things to take from this:
 
 1. **Upstream's planned fix is half a step** — keep the palette JSON
    system, but route it into Tailwind tokens instead of imperatively
-   overriding CSS vars. That removes one *symptom* (drift between layers)
-   without removing the *cause* (multiple sources of truth for color).
+   overriding CSS vars. That removes one _symptom_ (drift between layers)
+   without removing the _cause_ (multiple sources of truth for color).
    The lite fork can go further: delete the palette system entirely and
-   *be* the Tailwind-compatible tokens.
+   _be_ the Tailwind-compatible tokens.
 2. **The audit is filed as MEDIUM confidence and "nice-to-have"** — even
    the team that filed it isn't fully confident. The issue body doesn't
    actually name extension breakage as the blocker; that was a guess on
@@ -301,16 +304,16 @@ node-color-picker.
 A recent-year sample of merged PRs touching color tokens, in roughly
 chronological order:
 
-| PR | Title | What it shows |
-|----|-------|---------------|
-| [#5529](https://github.com/Comfy-Org/ComfyUI_frontend/pull/5529) | Fix Vue slot label colors for light theme | Light theme regression — light ≠ first-class. |
-| [#6363](https://github.com/Comfy-Org/ComfyUI_frontend/pull/6363) | Css token standardization | Standardization pass — they've been trying. |
-| [#6569](https://github.com/Comfy-Org/ComfyUI_frontend/pull/6569) | Updated node tokens | Continuing churn on canvas token names. |
-| [#6589](https://github.com/Comfy-Org/ComfyUI_frontend/pull/6589) / [#6714](https://github.com/Comfy-Org/ComfyUI_frontend/pull/6714) | minimap and canvas bg to use menu color tokens | Required a backport — production color drift. |
-| [#7366](https://github.com/Comfy-Org/ComfyUI_frontend/pull/7366) / [#7368](https://github.com/Comfy-Org/ComfyUI_frontend/pull/7368) | fix: hardcoded color tokens (not theme-aware) | Hardcoded values keep getting committed; required a backport. |
-| [#7908](https://github.com/Comfy-Org/ComfyUI_frontend/pull/7908) | fix: replace text-white with theme-aware color tokens | Same disease, different surface. |
-| [#10374](https://github.com/Comfy-Org/ComfyUI_frontend/pull/10374) | consolidate `--color-coral-red` into `--color-coral` | Naming drift — two tokens for the same color. |
-| [#11139](https://github.com/Comfy-Org/ComfyUI_frontend/pull/11139) | add plum/ink color primitives and standardize design tokens | They keep *adding* primitives, which expands the layered tower rather than collapsing it. |
+| PR                                                                                                                                  | Title                                                       | What it shows                                                                             |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [#5529](https://github.com/Comfy-Org/ComfyUI_frontend/pull/5529)                                                                    | Fix Vue slot label colors for light theme                   | Light theme regression — light ≠ first-class.                                             |
+| [#6363](https://github.com/Comfy-Org/ComfyUI_frontend/pull/6363)                                                                    | Css token standardization                                   | Standardization pass — they've been trying.                                               |
+| [#6569](https://github.com/Comfy-Org/ComfyUI_frontend/pull/6569)                                                                    | Updated node tokens                                         | Continuing churn on canvas token names.                                                   |
+| [#6589](https://github.com/Comfy-Org/ComfyUI_frontend/pull/6589) / [#6714](https://github.com/Comfy-Org/ComfyUI_frontend/pull/6714) | minimap and canvas bg to use menu color tokens              | Required a backport — production color drift.                                             |
+| [#7366](https://github.com/Comfy-Org/ComfyUI_frontend/pull/7366) / [#7368](https://github.com/Comfy-Org/ComfyUI_frontend/pull/7368) | fix: hardcoded color tokens (not theme-aware)               | Hardcoded values keep getting committed; required a backport.                             |
+| [#7908](https://github.com/Comfy-Org/ComfyUI_frontend/pull/7908)                                                                    | fix: replace text-white with theme-aware color tokens       | Same disease, different surface.                                                          |
+| [#10374](https://github.com/Comfy-Org/ComfyUI_frontend/pull/10374)                                                                  | consolidate `--color-coral-red` into `--color-coral`        | Naming drift — two tokens for the same color.                                             |
+| [#11139](https://github.com/Comfy-Org/ComfyUI_frontend/pull/11139)                                                                  | add plum/ink color primitives and standardize design tokens | They keep _adding_ primitives, which expands the layered tower rather than collapsing it. |
 
 The pattern: a steady stream of fix-PRs over ~12 months for "hardcoded
 color," "not theme-aware," "color X doesn't work in light theme,"
@@ -338,7 +341,7 @@ suffice:
 1. **#11048 itself** — upstream's own audit identifies the layered
    system as the problem. We aren't inventing a critique.
 2. **The fix-PR cadence** (~15 PRs/year just to keep tokens consistent)
-   is the cost of *not* rewriting. A fork pays it once.
+   is the cost of _not_ rewriting. A fork pays it once.
 3. **#11081 + V1/V2 coexistence + #8024's six-picker duplication** — the
    layered-systems disease metastasizes when not addressed at the root.
    Upstream is shipping V2s without removing V1s; we should not inherit
