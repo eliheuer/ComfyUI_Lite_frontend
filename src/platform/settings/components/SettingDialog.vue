@@ -73,9 +73,7 @@
       </template>
       <template v-else-if="activeSettingCategory">
         <CurrentUserMessage v-if="activeSettingCategory.label === 'Comfy'" />
-        <ColorPaletteMessage
-          v-if="activeSettingCategory.label === 'Appearance'"
-        />
+        <ColorSchemeMenu v-if="activeSettingCategory.label === 'Appearance'" />
         <SettingsPanel :setting-groups="sortedGroups(activeSettingCategory)" />
       </template>
     </template>
@@ -91,7 +89,7 @@ import BaseModalLayout from '@/components/widget/layout/BaseModalLayout.vue'
 import NavItem from '@/components/widget/nav/NavItem.vue'
 import NavTitle from '@/components/widget/nav/NavTitle.vue'
 import { useAuthActions } from '@/composables/auth/useAuthActions'
-import ColorPaletteMessage from '@/platform/settings/components/ColorPaletteMessage.vue'
+import ColorSchemeMenu from '@/components/ColorSchemeMenu.vue'
 import SettingsPanel from '@/platform/settings/components/SettingsPanel.vue'
 import { useSettingSearch } from '@/platform/settings/composables/useSettingSearch'
 import { useSettingUI } from '@/platform/settings/composables/useSettingUI'

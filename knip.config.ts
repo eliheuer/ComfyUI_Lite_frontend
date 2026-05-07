@@ -56,8 +56,8 @@ const config: KnipConfig = {
     'src/components/sidebar/tabs/nodeLibrary/CustomNodesPanel.vue',
     // Lite theme system foundation — finishing wire-up over step 2
     'src/services/themeBridge.ts',
-    'src/services/userThemeLoader.ts',
-    'src/components/ColorSchemeMenu.vue',
+    // ColorPaletteMessage replaced by ColorSchemeMenu; deleted in step 3
+    'src/platform/settings/components/ColorPaletteMessage.vue',
     // Marketing media tooling — adopted by pages in a follow-up PR
     'apps/website/src/components/common/SiteVideo.vue',
     'apps/website/src/utils/marketingImage.ts',

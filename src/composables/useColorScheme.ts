@@ -3,7 +3,6 @@ import { watchEffect } from 'vue'
 
 const STORAGE_KEY = 'lite-color-scheme'
 
-/** @knipIgnoreUsedByStackedPR — consumed by ColorSchemeMenu.vue (step 2c). */
 export const THEMES = [
   'dark',
   'light',
@@ -13,7 +12,6 @@ export const THEMES = [
   'campfire'
 ] as const
 
-/** @knipIgnoreUsedByStackedPR — consumed by ColorSchemeMenu.vue (step 2c). */
 export type Theme = (typeof THEMES)[number]
 
 const DEFAULT_THEME: Theme = 'dark'
