@@ -15,7 +15,7 @@ export const THEMES = [
 
 export type Theme = (typeof THEMES)[number]
 
-export type Mood = 'dark' | 'light'
+type Mood = 'dark' | 'light'
 
 const DEFAULT_THEME: Theme = 'dark'
 
