@@ -1,5 +1,19 @@
 <div align="center">
 
+# ⚠️ Under Active Development ⚠️
+
+### Use at your own risk — things are broken right now.
+
+</div>
+
+This is Eli's opinionated fork of the [ComfyUI frontend](https://github.com/Comfy-Org/ComfyUI_frontend). It's designed for a design-in-code and heavily agent-based workflow, and tries to simplify and redesign the ComfyUI frontend.
+
+<img width="2560" height="1440" alt="Image" src="https://github.com/user-attachments/assets/0230bd37-224a-4a21-a6a1-e4185868c57d" />
+
+---
+
+<div align="center">
+
 # ComfyUI_frontend
 
 **Official front-end implementation of [ComfyUI](https://github.com/comfyanonymous/ComfyUI).**
