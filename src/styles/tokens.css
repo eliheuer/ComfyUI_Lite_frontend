@@ -31,8 +31,8 @@
   --color-focus:          #f0ff41;  /* matches brand-yellow      */
 
   /* --- Color: state ------------------------------------------ */
-  --color-action:         #f0ff41;  /* run / primary action      */
-  --color-action-fg:      #0e0f12;  /* text on action bg         */
+  --color-action:         #2d6f3c;  /* run / primary action — forest green */
+  --color-action-fg:      #ffffff;  /* text on action bg         */
   --color-danger:         #ff4444;
   --color-danger-fg:      #ffffff;
   --color-warning:        #f5b800;
