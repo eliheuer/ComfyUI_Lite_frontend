@@ -54,8 +54,6 @@ const config: KnipConfig = {
     '.github/workflows/ci-oss-assets-validation.yaml',
     // Pending integration in stacked PR
     'src/components/sidebar/tabs/nodeLibrary/CustomNodesPanel.vue',
-    // Lite theme system foundation — finishing wire-up over step 2
-    'src/services/themeBridge.ts',
     // ColorPaletteMessage replaced by ColorSchemeMenu; deleted in step 3
     'src/platform/settings/components/ColorPaletteMessage.vue',
     // Marketing media tooling — adopted by pages in a follow-up PR

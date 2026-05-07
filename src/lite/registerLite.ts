@@ -13,9 +13,21 @@
 import '@/styles/tokens.css'
 
 import { useColorScheme } from '@/composables/useColorScheme'
+import { installThemeBridge } from '@/services/themeBridge'
+import { app } from '@/scripts/app'
 
 // Activate the theme runtime. Sets up a watchEffect that toggles the
 // `data-theme` attribute on <html> based on the stored preference.
-// Safe to call at module load — the watchEffect just observes a ref;
-// no DOM mutation happens until the value changes.
 useColorScheme()
+
+// Install the LiteGraph bridge once the canvas exists. The canvas
+// is created during app.setup(), which runs after this module loads.
+// Poll on rAF until it's ready, then install once.
+function installBridgeWhenReady() {
+  if (app.canvas) {
+    installThemeBridge()
+  } else {
+    requestAnimationFrame(installBridgeWhenReady)
+  }
+}
+installBridgeWhenReady()
