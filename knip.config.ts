@@ -57,6 +57,7 @@ const config: KnipConfig = {
     // Lite theme system foundation — wired in step 2 (menu)
     'src/composables/useColorScheme.ts',
     'src/services/themeBridge.ts',
+    'src/services/userThemeLoader.ts',
     // Marketing media tooling — adopted by pages in a follow-up PR
     'apps/website/src/components/common/SiteVideo.vue',
     'apps/website/src/utils/marketingImage.ts',
