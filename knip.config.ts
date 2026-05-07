@@ -54,8 +54,7 @@ const config: KnipConfig = {
     '.github/workflows/ci-oss-assets-validation.yaml',
     // Pending integration in stacked PR
     'src/components/sidebar/tabs/nodeLibrary/CustomNodesPanel.vue',
-    // Lite theme system foundation — wired in step 2 (menu)
-    'src/composables/useColorScheme.ts',
+    // Lite theme system foundation — finishing wire-up over step 2
     'src/services/themeBridge.ts',
     'src/services/userThemeLoader.ts',
     'src/components/ColorSchemeMenu.vue',

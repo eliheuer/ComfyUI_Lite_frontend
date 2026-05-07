@@ -24,6 +24,9 @@ import App from './App.vue'
 // Intentionally relative import to ensure the CSS is loaded in the right order (after litegraph.css)
 import './assets/css/style.css'
 import { i18n } from './i18n'
+// Lite-only registration barrel — single touchpoint for fork-specific
+// systems. See src/lite/registerLite.ts.
+import './lite/registerLite'
 
 /**
  * CRITICAL: Load remote config FIRST for cloud builds to ensure
