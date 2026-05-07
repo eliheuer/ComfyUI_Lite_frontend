@@ -465,19 +465,21 @@ export). Built-in themes and custom themes appear side-by-side in the
 theme menu. This is a Step 4 deliverable; tokens.css and the rest of
 Step 1 don't depend on it.
 
-### Tier 1.6 — external dotfile themes (`~/.config/comfy/themes/`)
+### Tier 1.6 — user themes (`<ComfyUI>/user/default/themes/`)
 
-A first-class extension point for the Unix-config audience: drop a TOML
-file in `~/.config/comfy/themes/`, restart Comfy, see it in the theme
-menu. Mirrors how alacritty/starship/foot ship themes (a directory of
-TOML files, no GUI required).
+A first-class extension point for users who want themes as text files:
+drop a TOML in `<ComfyUI>/user/default/themes/`, refresh, see it in the
+theme menu. Mirrors how alacritty/starship/foot ship themes (a
+directory of files, no GUI required) — but with **zero new backend
+code**, since ComfyUI already serves user data via the `/userdata`
+endpoint.
 
 **File format: TOML.** Reasons:
 
 - Sections, comments, and metadata are first-class.
 - Modern Unix-config audience already uses TOML (starship, alacritty
   newer, helix, foot, niri). Vim/Neovim/VS Code highlight it natively.
-- Parses to a flat JS object with a small library (~5 KB).
+- Parses to a flat JS object with a small library (~3 KB).
 
 Example skeleton:
 
@@ -511,30 +513,39 @@ md = "0px"
 fast = "0ms"
 ```
 
-**Built-in themes vs dotfile themes:** Built-in themes ship as CSS
-blocks in `tokens.css` and are colorways only (typography/spacing/
-radii shared from `:root`). Dotfile themes can override anything —
-power users get full design-language control.
+**Built-in themes vs user themes:** Built-in themes ship as CSS blocks
+in `tokens.css` and are colorways only (typography/spacing/radii
+shared from `:root`). User themes can override anything — power users
+get full design-language control.
 
-**Implementation sketch:**
+**Implementation:** zero backend code.
 
-- Small Python companion at `python/lite_themes/` (precedent: SVG demo
-  node, `tools/devtools/`). Installs to `<ComfyUI>/custom_nodes/` via
-  `scripts/install-lite-themes.sh`.
-- Backend extension exposes `GET /api/lite-themes` — reads
-  `$XDG_CONFIG_HOME/comfy/themes/*.toml` (default `~/.config/comfy/
-themes/`), parses, returns JSON.
-- Frontend loader at `src/services/dotfileThemeLoader.ts` fetches the
-  list on app boot and adds entries to the theme menu.
-- On selection: same `applyTokenMap()` function the legacy palette
-  adapter (Tier 1.5) uses — both are "translate a token map → set CSS
-  vars on `:root`."
-- File watching for live reload: skip in v1; an explicit "reload
-  themes" button in the menu is enough.
+- Frontend service at `src/services/userThemeLoader.ts`:
+  1. Lists files via `api.listUserDataFullInfo('themes')`.
+  2. Filters to `*.toml`.
+  3. On theme selection, fetches the TOML body via
+     `api.getUserData('themes/<filename>')`, parses with `smol-toml`
+     (~3 KB), passes the token map to `applyTokenMap()`.
+- `applyTokenMap()` is shared with the legacy palette adapter (Tier
+  1.5) — both flows are "translate token map → set CSS vars on
+  `:root`."
+- File watching / live reload: skip in v1. A "reload themes" button
+  on the menu is enough.
+
+**Initial seed:** ship 2–3 example TOMLs (gruvbox, nord, tokyo-night)
+checked into the repo at `examples/themes/`, with a brief README that
+copying any of them into `<ComfyUI>/user/default/themes/` is enough
+to install.
 
 **Discovery:** themes appear in the menu under a "User themes"
-divider. Theme menu shape (built-ins ▸ divider ▸ dotfile themes) is
+divider. Theme menu shape (built-ins ▸ divider ▸ user themes) is
 decided in step 2.
+
+**Why not `~/.config/comfy/themes/`?** That XDG-dotfile location
+needed a Python companion to bridge the browser sandbox. ComfyUI's
+existing `/userdata` endpoint reaches `<ComfyUI>/user/default/`
+directly with no new code. The cost: themes live inside the install
+dir instead of a clean dotfile location. Worth it for the simplicity.
 
 ### Tier 2 — break, with a one-page migration note
 
@@ -614,26 +625,24 @@ underneath. Single switchover, not a long transition.
 Old palette code stays alive in parallel — Tier 1 means nothing breaks
 visually.
 
-**Step 1.5 — external theme support.** Build the dotfile theme loader
-(Tier 1.6):
+**Step 1.5 — user theme support (Tier 1.6).** Build the user theme
+loader. No backend code needed; uses the existing `/userdata`
+endpoint.
 
-- 1.5a. `python/lite_themes/` — backend extension, reads
-  `$XDG_CONFIG_HOME/comfy/themes/*.toml`, exposes `/api/lite-themes`.
-- 1.5b. `scripts/install-lite-themes.sh` — installs the Python folder
-  into `<ComfyUI>/custom_nodes/`.
-- 1.5c. `src/services/dotfileThemeLoader.ts` — fetches the list,
-  applies on selection. Shares `applyTokenMap()` with the legacy
-  palette adapter.
-- 1.5d. Ship 2–3 example themes alongside the Python folder
-  (`gruvbox.toml`, `nord.toml`, `tokyo-night.toml`) so users have
-  starting templates.
+- 1.5a. `src/services/userThemeLoader.ts` — lists `*.toml` from
+  `<ComfyUI>/user/default/themes/`, parses with `smol-toml`, applies
+  via `applyTokenMap()` (shared with legacy palette adapter).
+- 1.5b. Add `smol-toml` dependency.
+- 1.5c. Ship 2–3 example themes at `examples/themes/`
+  (`gruvbox.toml`, `nord.toml`, `tokyo-night.toml`) with a README
+  saying "copy these into `<ComfyUI>/user/default/themes/`."
 
 Step 1.5 can land before or after step 2 (the menu) — they're
-independent, but the menu becomes more compelling once dotfile themes
+independent, but the menu becomes more compelling once user themes
 exist to populate it.
 
 **Step 2 — wire the menu.** Build `ColorSchemeMenu.vue`. Lists built-in
-themes + dotfile themes (from 1.5) under a divider. Drop
+themes + user themes (from 1.5) under a divider. Drop
 `ColorPaletteMessage.vue` from the settings dialog and replace it.
 
 **Step 3 — delete the old system.** Remove every file in the "Files
