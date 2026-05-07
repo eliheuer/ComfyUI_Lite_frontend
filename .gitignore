@@ -17,6 +17,11 @@ yarn.lock
 .prettiercache
 .stylelintcache
 
+# Python (lite_themes companion)
+__pycache__
+*.pyc
+*.pyo
+
 node_modules
 .pnpm-store
 dist
