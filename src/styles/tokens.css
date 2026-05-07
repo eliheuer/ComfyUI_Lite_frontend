@@ -31,7 +31,7 @@
   --color-focus:          #f0ff41;  /* matches brand-yellow      */
 
   /* --- Color: state ------------------------------------------ */
-  --color-action:         #1f4a28;  /* run / primary action — forest green */
+  --color-action:         #2a5d36;  /* run / primary action — forest green */
   --color-action-fg:      #ffffff;  /* text on action bg         */
   --color-danger:         #ff4444;
   --color-danger-fg:      #ffffff;
@@ -145,9 +145,18 @@
   /* Design-system aliases — packages/design-system/src/css/style.css
    * defines these and uses them for primary-action visuals (Run
    * button, progress bars, ✓ indicators). Map them at our --color-action
-   * so theme switches and visual-redesign work flows through here. */
+   * so theme switches and visual-redesign work flows through here.
+   *
+   * We also override the deepest palette primitive (--color-jade-600)
+   * AND the @theme alias (--color-success-background) directly,
+   * because Tailwind 4 may snapshot @theme values at build time and
+   * not re-resolve our cascade override at runtime. Setting all three
+   * guarantees at least one path through the chain wins. */
+  --color-jade-600: var(--color-action);
   --success-background: var(--color-action);
   --success-foreground: var(--color-action-fg);
+  --color-success-background: var(--color-action);
+  --color-success-foreground: var(--color-action-fg);
 }
 
 /* ============================================================
