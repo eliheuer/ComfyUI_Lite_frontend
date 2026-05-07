@@ -58,6 +58,7 @@ const config: KnipConfig = {
     'src/composables/useColorScheme.ts',
     'src/services/themeBridge.ts',
     'src/services/userThemeLoader.ts',
+    'src/components/ColorSchemeMenu.vue',
     // Marketing media tooling — adopted by pages in a follow-up PR
     'apps/website/src/components/common/SiteVideo.vue',
     'apps/website/src/utils/marketingImage.ts',

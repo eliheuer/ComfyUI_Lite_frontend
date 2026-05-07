@@ -1,4 +1,18 @@
 {
+  "colorScheme": {
+    "builtIn": "Built-in",
+    "user": "User themes",
+    "reload": "Reload user themes",
+    "noUserThemes": "No user themes found. Drop a CSS file in <code>{path}</code> to add one.",
+    "themes": {
+      "dark": "Dark",
+      "light": "Light",
+      "gray": "Gray",
+      "strawberry": "Strawberry",
+      "mint": "Mint",
+      "campfire": "Campfire"
+    }
+  },
   "g": {
     "shortcutSuffix": " ({shortcut})",
     "user": "User",
