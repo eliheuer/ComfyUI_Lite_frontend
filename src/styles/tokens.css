@@ -1,0 +1,213 @@
+/* tokens.css — the entire token system.
+ *
+ * One file. One layer of names. All semantic.
+ * See .agents/context/eli/theme-system-design.md for the full design.
+ *
+ * Layout of this file:
+ *   1. :root — dark default tokens + theme-invariant tokens (typography,
+ *      spacing, radii, shadows, motion) + Tier 1 legacy aliases
+ *   2. [data-theme="..."] blocks for the other 5 themes (1c — TODO)
+ *   3. @theme block — exposes tokens to Tailwind 4 utilities
+ *
+ * Add a token only when an actual UI need exists. Stop at ~30 colors,
+ * ~25 non-color. If you're tempted to add a hover/active/disabled
+ * variant up front, don't — wait for the UI need to surface.
+ */
+
+/* ============================================================
+ * 1. Root — dark theme (default) + theme-invariant tokens
+ * ============================================================ */
+
+:root {
+  /* --- Color: surface / text ---------------------------------- */
+  --color-bg:             #0e0f12;  /* page background           */
+  --color-surface:        #171718;  /* panel, menu, sidebar      */
+  --color-surface-alt:    #222226;  /* input, table-stripe alt   */
+  --color-text:           #ffffff;
+  --color-text-muted:     #999999;
+  --color-text-disabled:  #666666;
+  --color-border:         #4e4e4e;
+  --color-border-strong:  #6a6a6a;
+  --color-focus:          #f0ff41;  /* matches brand-yellow      */
+
+  /* --- Color: state ------------------------------------------ */
+  --color-action:         #f0ff41;  /* run / primary action      */
+  --color-action-fg:      #0e0f12;  /* text on action bg         */
+  --color-danger:         #ff4444;
+  --color-danger-fg:      #ffffff;
+  --color-warning:        #f5b800;
+  --color-success:        #4ade80;
+
+  /* --- Color: canvas (LiteGraph background, V2 nodes) -------- */
+  --color-canvas-bg:      #141414;
+  --color-canvas-grid:    rgb(255 255 255 / 0.02);
+  --color-node-bg:        #353535;
+  --color-node-header:    #2a2a2a;
+  --color-node-text:      #aaaaaa;
+  --color-node-border:    #4e4e4e;
+  --color-node-selected:  #ffffff;
+  --color-node-error:     #e00000;
+
+  /* --- Color: links (datatype socket colors) ----------------- */
+  /* Mirrors src/assets/palettes/dark.json node_slot, role-renamed */
+  --color-link-model:         #b39ddb;
+  --color-link-image:         #64b5f6;
+  --color-link-latent:        #ff9cf9;
+  --color-link-conditioning:  #ffa931;
+  --color-link-mask:          #81c784;
+  --color-link-clip:          #ffd500;
+  --color-link-vae:           #ff6e6e;
+  --color-link-control-net:   #6ee7b7;
+  --color-link-string:        #b0b0b0;
+  --color-link-int:           #29b8db;
+  --color-link-float:         #66ffff;
+  --color-link-bool:          #ecb4b4;
+
+  /* --- Typography (theme-invariant) -------------------------- */
+  --text-family-sans:    'Inter', system-ui, -apple-system, sans-serif;
+  --text-family-mono:    ui-monospace, 'JetBrains Mono', monospace;
+
+  --text-size-xs:        0.75rem;    /* 12px */
+  --text-size-sm:        0.875rem;   /* 14px */
+  --text-size-base:      1rem;       /* 16px */
+  --text-size-lg:        1.125rem;   /* 18px */
+  --text-size-xl:        1.25rem;    /* 20px */
+  --text-size-2xl:       1.5rem;     /* 24px */
+
+  --text-weight-regular: 400;
+  --text-weight-medium:  500;
+  --text-weight-bold:    700;
+
+  --text-leading-tight:  1.2;
+  --text-leading-normal: 1.5;
+
+  /* --- Spacing scale (theme-invariant) ----------------------- */
+  --space-0: 0;
+  --space-1: 0.25rem;    /* 4px  */
+  --space-2: 0.5rem;     /* 8px  */
+  --space-3: 0.75rem;    /* 12px */
+  --space-4: 1rem;       /* 16px */
+  --space-5: 1.25rem;    /* 20px */
+  --space-6: 1.5rem;     /* 24px */
+  --space-8: 2rem;       /* 32px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-12: 3rem;      /* 48px */
+
+  /* --- Radii (theme-invariant) ------------------------------- */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-pill: 9999px;
+
+  /* --- Shadows / elevation (theme-invariant) ----------------- */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+
+  /* --- Motion (theme-invariant) ------------------------------ */
+  --motion-fast: 100ms;
+  --motion-base: 200ms;
+  --motion-slow: 400ms;
+  --motion-ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+  /* ============================================================
+   * Legacy aliases (Tier 1 compat).
+   *
+   * These names are baked into ~30 components in src/ and into an
+   * unknowable number of community extensions. Keep them as aliases
+   * so existing CSS keeps working; reference --color-* roles directly
+   * in any new code.
+   *
+   * Removable in a future major once the alias-using surface has
+   * migrated. Not now.
+   *
+   * Source mapping: src/assets/palettes/dark.json comfy_base
+   * ============================================================ */
+  --fg-color: var(--color-text);
+  --bg-color: var(--color-bg);
+  --border-color: var(--color-border);
+  --comfy-menu-bg: var(--color-surface);
+  --comfy-menu-secondary-bg: var(--color-surface-alt);
+  --comfy-input-bg: var(--color-surface-alt);
+  --input-text: var(--color-text);
+  --descrip-text: var(--color-text-muted);
+  --drag-text: var(--color-text-muted);
+  --error-text: var(--color-danger);
+  --tr-odd-bg-color: var(--color-surface-alt);
+  --tr-even-bg-color: var(--color-surface);
+  --content-bg: var(--color-border);
+  --content-fg: var(--color-text);
+  --content-hover-bg: var(--color-surface-alt);
+  --content-hover-fg: var(--color-text);
+  --bar-shadow: var(--shadow-md);
+}
+
+/* ============================================================
+ * 2. Other themes (1c — TODO: light, gray, strawberry, mint, campfire)
+ *
+ * Only --color-* tokens vary between themes. Typography, spacing,
+ * radii, shadows, and motion are inherited from :root.
+ * ============================================================ */
+
+[data-theme="light"] {
+  /* TODO: 1c — neutral light theme */
+}
+
+[data-theme="gray"] {
+  /* TODO: 1c — mid-neutral grey */
+}
+
+[data-theme="strawberry"] {
+  /* TODO: 1c — light, warm pink/red */
+}
+
+[data-theme="mint"] {
+  /* TODO: 1c — light, cool mint green */
+}
+
+[data-theme="campfire"] {
+  /* TODO: 1c — dark, warm amber/orange */
+}
+
+/* ============================================================
+ * 3. Tailwind 4 @theme — utility class generation.
+ *
+ * Aliasing tokens via @theme makes Tailwind generate utilities like
+ * bg-bg, text-text-muted, p-4, rounded-md, shadow-md from our tokens.
+ * ============================================================ */
+
+@theme {
+  /* Colors */
+  --color-bg:             var(--color-bg);
+  --color-surface:        var(--color-surface);
+  --color-surface-alt:    var(--color-surface-alt);
+  --color-text:           var(--color-text);
+  --color-text-muted:     var(--color-text-muted);
+  --color-text-disabled:  var(--color-text-disabled);
+  --color-border:         var(--color-border);
+  --color-border-strong:  var(--color-border-strong);
+  --color-focus:          var(--color-focus);
+  --color-action:         var(--color-action);
+  --color-action-fg:      var(--color-action-fg);
+  --color-danger:         var(--color-danger);
+  --color-danger-fg:      var(--color-danger-fg);
+  --color-warning:        var(--color-warning);
+  --color-success:        var(--color-success);
+
+  /* Typography */
+  --font-sans: var(--text-family-sans);
+  --font-mono: var(--text-family-mono);
+
+  /* Radii */
+  --radius-sm:   var(--radius-sm);
+  --radius-md:   var(--radius-md);
+  --radius-lg:   var(--radius-lg);
+  --radius-xl:   var(--radius-xl);
+  --radius-pill: var(--radius-pill);
+
+  /* Shadows */
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+}
