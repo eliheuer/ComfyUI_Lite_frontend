@@ -108,19 +108,25 @@ import Tag from 'primevue/tag'
 import TieredMenu from 'primevue/tieredmenu'
 import type { TieredMenuMethods, TieredMenuState } from 'primevue/tieredmenu'
 import ToggleSwitch from 'primevue/toggleswitch'
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import ComfyLogo from '@/components/icons/ComfyLogo.vue'
+import { THEMES, useColorScheme } from '@/composables/useColorScheme'
 import { useWorkflowTemplateSelectorDialog } from '@/composables/useWorkflowTemplateSelectorDialog'
 import { useSettingStore } from '@/platform/settings/settingStore'
 import type { SettingPanelType } from '@/platform/settings/types'
 import { useTelemetry } from '@/platform/telemetry'
-import { useColorPaletteService } from '@/services/colorPaletteService'
 import { useSettingsDialog } from '@/platform/settings/composables/useSettingsDialog'
+import {
+  applyUserTheme,
+  clearUserTheme,
+  loadUserThemes,
+  useActiveUserTheme
+} from '@/services/userThemeLoader'
+import type { UserTheme } from '@/services/userThemeLoader'
 import { useCommandStore } from '@/stores/commandStore'
 import { useMenuItemStore } from '@/stores/menuItemStore'
-import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
 import { normalizeI18nKey } from '@/utils/formatUtil'
 import { whileMouseDown } from '@/utils/mouseDownUtil'
 import { useManagerState } from '@/workbench/extensions/manager/composables/useManagerState'
@@ -129,11 +135,17 @@ import { ManagerTab } from '@/workbench/extensions/manager/types/comfyManagerTyp
 const { t } = useI18n()
 const commandStore = useCommandStore()
 const menuItemStore = useMenuItemStore()
-const colorPaletteStore = useColorPaletteStore()
-const colorPaletteService = useColorPaletteService()
 const settingsDialog = useSettingsDialog()
 const managerState = useManagerState()
 const settingStore = useSettingStore()
+
+const { theme: currentTheme } = useColorScheme()
+const activeUserThemeId = useActiveUserTheme()
+const userThemes = ref<UserTheme[]>([])
+
+onMounted(async () => {
+  userThemes.value = await loadUserThemes()
+})
 
 const menuRef = ref<
   ({ dirty: boolean } & TieredMenuMethods & TieredMenuState) | null
@@ -179,18 +191,43 @@ const showManageExtensions = async () => {
   })
 }
 
-const themeMenuItems = computed(() => {
-  return colorPaletteStore.palettes.map((palette) => ({
-    key: `theme-${palette.id}`,
-    label: palette.name,
-    parentPath: 'theme',
-    comfyCommand: {
-      active: () => colorPaletteStore.activePaletteId === palette.id
-    },
-    command: async () => {
-      await colorPaletteService.loadColorPalette(palette.id)
+const themeMenuItems = computed<MenuItem[]>(() => {
+  const items: MenuItem[] = []
+
+  for (const builtIn of THEMES) {
+    items.push({
+      key: `theme-${builtIn}`,
+      label: t(`colorScheme.themes.${builtIn}`),
+      parentPath: 'theme',
+      comfyCommand: {
+        active: () =>
+          currentTheme.value === builtIn && activeUserThemeId.value === null
+      },
+      command: () => {
+        clearUserTheme()
+        currentTheme.value = builtIn
+      }
+    })
+  }
+
+  if (userThemes.value.length > 0) {
+    items.push({ separator: true })
+    for (const ut of userThemes.value) {
+      items.push({
+        key: `theme-user-${ut.id}`,
+        label: ut.meta.name ?? ut.id,
+        parentPath: 'theme',
+        comfyCommand: {
+          active: () => activeUserThemeId.value === ut.id
+        },
+        command: () => {
+          applyUserTheme(ut)
+        }
+      })
     }
-  }))
+  }
+
+  return items
 })
 
 const extraMenuItems = computed(() => [

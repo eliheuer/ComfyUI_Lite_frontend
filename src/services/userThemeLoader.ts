@@ -21,6 +21,16 @@ const META_REGEX = /\/\*\s*@meta\s+([\w-]+)\s*=\s*([^*]+?)\s*\*\//g
 
 const themes = ref<UserTheme[] | null>(null)
 const isLoading = ref(false)
+const activeUserThemeId = ref<string | null>(null)
+
+/**
+ * The id of the currently-applied user theme, or null if a built-in
+ * theme is active. Shared between consumers (ColorSchemeMenu and
+ * ComfyMenuButton's quick-access dropdown).
+ */
+export function useActiveUserTheme() {
+  return activeUserThemeId
+}
 
 /**
  * Lists user themes from `<ComfyUI>/user/default/themes/*.css`.
@@ -105,6 +115,7 @@ export function applyUserTheme(theme: UserTheme): void {
     document.head.appendChild(style)
   }
   style.textContent = theme.cssText
+  activeUserThemeId.value = theme.id
 }
 
 /**
@@ -114,4 +125,5 @@ export function applyUserTheme(theme: UserTheme): void {
 export function clearUserTheme(): void {
   const style = document.getElementById(STYLE_ID)
   if (style) style.remove()
+  activeUserThemeId.value = null
 }

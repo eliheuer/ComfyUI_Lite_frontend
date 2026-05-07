@@ -2,17 +2,23 @@
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { THEMES, useColorScheme } from '@/composables/useColorScheme';
-import type { Theme } from '@/composables/useColorScheme';
-import { applyUserTheme, clearUserTheme, loadUserThemes, reloadUserThemes } from '@/services/userThemeLoader';
-import type { UserTheme } from '@/services/userThemeLoader';
+import { THEMES, useColorScheme } from '@/composables/useColorScheme'
+import type { Theme } from '@/composables/useColorScheme'
+import {
+  applyUserTheme,
+  clearUserTheme,
+  loadUserThemes,
+  reloadUserThemes,
+  useActiveUserTheme
+} from '@/services/userThemeLoader'
+import type { UserTheme } from '@/services/userThemeLoader'
 import { cn } from '@comfyorg/tailwind-utils'
 
 const { t } = useI18n()
 const { theme } = useColorScheme()
+const activeUserId = useActiveUserTheme()
 
 const userThemes = ref<UserTheme[]>([])
-const activeUserId = ref<string | null>(null)
 const isReloading = ref(false)
 
 onMounted(async () => {
@@ -21,13 +27,11 @@ onMounted(async () => {
 
 function selectBuiltIn(t: Theme) {
   clearUserTheme()
-  activeUserId.value = null
   theme.value = t
 }
 
 function selectUser(ut: UserTheme) {
   applyUserTheme(ut)
-  activeUserId.value = ut.id
 }
 
 async function reload() {
