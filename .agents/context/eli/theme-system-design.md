@@ -468,74 +468,67 @@ Step 1 don't depend on it.
 ### Tier 1.6 — user themes (`<ComfyUI>/user/default/themes/`)
 
 A first-class extension point for users who want themes as text files:
-drop a TOML in `<ComfyUI>/user/default/themes/`, refresh, see it in the
-theme menu. Mirrors how alacritty/starship/foot ship themes (a
-directory of files, no GUI required) — but with **zero new backend
-code**, since ComfyUI already serves user data via the `/userdata`
-endpoint.
+drop a CSS file in `<ComfyUI>/user/default/themes/`, refresh, see it
+in the theme menu. **Zero backend code** (uses the existing
+`/userdata` endpoint) and **zero parser dependencies** (browser
+parses CSS natively).
 
-**File format: TOML.** Reasons:
+**File format: CSS.** Reasons:
 
-- Sections, comments, and metadata are first-class.
-- Modern Unix-config audience already uses TOML (starship, alacritty
-  newer, helix, foot, niri). Vim/Neovim/VS Code highlight it natively.
-- Parses to a flat JS object with a small library (~3 KB).
+- Browser-native — no parser dependency at all.
+- Universal — every web dev already knows the syntax.
+- Direct — what the user writes is what gets applied. No translation
+  layer between the theme file and the rendered styles.
+- Expressive — anything CSS supports is available (media queries,
+  fancy selectors, non-`:root` rules if a power user wants them).
 
 Example skeleton:
 
-```toml
-[meta]
-name        = "Gruvbox Dark"
-author      = "morhetz"
-description = "Retro groove color scheme."
-mood        = "dark"
+```css
+/* Optional metadata — picked up by the theme menu. */
+/* @meta name = Gruvbox Dark */
+/* @meta author = morhetz */
+/* @meta description = Retro groove color scheme. */
+/* @meta mood = dark */ /* or "light" */
 
-[colors]
-bg            = "#282828"
-surface       = "#3c3836"
-text          = "#ebdbb2"
-# ...all role tokens...
+:root {
+  --color-bg: #282828;
+  --color-surface: #3c3836;
+  --color-text: #ebdbb2;
+  /* ...all role tokens... */
 
-[colors.links]
-model = "#d3869b"
-image = "#83a598"
-# ...
-
-# Optional sections — only override what you want.
-[typography]
-font-sans = "JetBrains Mono, monospace"
-
-[radii]
-sm = "0px"
-md = "0px"
-
-[motion]
-fast = "0ms"
+  --color-link-model: #d3869b;
+  --color-link-image: #83a598;
+  /* ... */
+}
 ```
+
+Metadata uses `/* @meta key = value */` comments — easy to scan with
+a regex on app boot, doesn't pollute the CSS itself.
 
 **Built-in themes vs user themes:** Built-in themes ship as CSS blocks
 in `tokens.css` and are colorways only (typography/spacing/radii
-shared from `:root`). User themes can override anything — power users
-get full design-language control.
+shared from `:root`). User themes can override anything — they're
+just CSS, they can do whatever CSS can do.
 
-**Implementation:** zero backend code.
+**Implementation:** zero backend code, zero parser deps.
 
 - Frontend service at `src/services/userThemeLoader.ts`:
   1. Lists files via `api.listUserDataFullInfo('themes')`.
-  2. Filters to `*.toml`.
-  3. On theme selection, fetches the TOML body via
-     `api.getUserData('themes/<filename>')`, parses with `smol-toml`
-     (~3 KB), passes the token map to `applyTokenMap()`.
-- `applyTokenMap()` is shared with the legacy palette adapter (Tier
-  1.5) — both flows are "translate token map → set CSS vars on
-  `:root`."
+  2. Filters to `*.css`.
+  3. For each file, fetches the body via
+     `api.getUserData('themes/<filename>')`, parses `@meta` comments
+     with a regex, returns `{ id, filename, meta, cssText }`.
+  4. On theme selection, injects the cssText into a `<style>`
+     element in `<head>`. Removing the element clears the theme
+     and falls back to the built-in cascade.
 - File watching / live reload: skip in v1. A "reload themes" button
   on the menu is enough.
 
-**Initial seed:** ship 2–3 example TOMLs (gruvbox, nord, tokyo-night)
-checked into the repo at `examples/themes/`, with a brief README that
-copying any of them into `<ComfyUI>/user/default/themes/` is enough
-to install.
+**Initial seed:** ship 3 example CSS themes (gruvbox, nord,
+tokyo-night) checked into the repo at `examples/themes/`, with a
+brief README that copying any of them into
+`<ComfyUI>/user/default/themes/` is enough to install.
 
 **Discovery:** themes appear in the menu under a "User themes"
 divider. Theme menu shape (built-ins ▸ divider ▸ user themes) is
@@ -626,15 +619,14 @@ Old palette code stays alive in parallel — Tier 1 means nothing breaks
 visually.
 
 **Step 1.5 — user theme support (Tier 1.6).** Build the user theme
-loader. No backend code needed; uses the existing `/userdata`
-endpoint.
+loader. No backend code, no parser dependencies; uses the existing
+`/userdata` endpoint.
 
-- 1.5a. `src/services/userThemeLoader.ts` — lists `*.toml` from
-  `<ComfyUI>/user/default/themes/`, parses with `smol-toml`, applies
-  via `applyTokenMap()` (shared with legacy palette adapter).
-- 1.5b. Add `smol-toml` dependency.
-- 1.5c. Ship 2–3 example themes at `examples/themes/`
-  (`gruvbox.toml`, `nord.toml`, `tokyo-night.toml`) with a README
+- 1.5a. `src/services/userThemeLoader.ts` — lists `*.css` from
+  `<ComfyUI>/user/default/themes/`, parses `@meta` comments with a
+  regex, applies by injecting a `<style>` element.
+- 1.5b. Ship 3 example CSS themes at `examples/themes/`
+  (`gruvbox.css`, `nord.css`, `tokyo-night.css`) with a README
   saying "copy these into `<ComfyUI>/user/default/themes/`."
 
 Step 1.5 can land before or after step 2 (the menu) — they're

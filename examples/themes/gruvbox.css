@@ -1,0 +1,54 @@
+/* Gruvbox Dark for Comfy Lite
+ * Based on the Retro Groove Color Scheme by Pavel Pertsev
+ * https://github.com/morhetz/gruvbox
+ */
+
+/* @meta name = Gruvbox Dark */
+/* @meta author = morhetz */
+/* @meta description = Retro groove color scheme. Warm, muted, easy on the eyes. */
+/* @meta mood = dark */
+
+:root {
+  /* Surface / text */
+  --color-bg: #282828;
+  --color-surface: #3c3836;
+  --color-surface-alt: #504945;
+  --color-text: #ebdbb2;
+  --color-text-muted: #a89984;
+  --color-text-disabled: #665c54;
+  --color-border: #504945;
+  --color-border-strong: #7c6f64;
+  --color-focus: #fabd2f;
+
+  /* State */
+  --color-action: #fabd2f;
+  --color-action-fg: #282828;
+  --color-danger: #fb4934;
+  --color-danger-fg: #282828;
+  --color-warning: #fe8019;
+  --color-success: #b8bb26;
+
+  /* Canvas */
+  --color-canvas-bg: #1d2021;
+  --color-canvas-grid: rgb(60 56 54 / 0.4);
+  --color-node-bg: #3c3836;
+  --color-node-header: #504945;
+  --color-node-text: #ebdbb2;
+  --color-node-border: #665c54;
+  --color-node-selected: #fabd2f;
+  --color-node-error: #fb4934;
+
+  /* Links — datatype socket colors */
+  --color-link-model: #d3869b;
+  --color-link-image: #83a598;
+  --color-link-latent: #d3869b;
+  --color-link-conditioning: #fabd2f;
+  --color-link-mask: #b8bb26;
+  --color-link-clip: #fabd2f;
+  --color-link-vae: #fb4934;
+  --color-link-control-net: #b8bb26;
+  --color-link-string: #a89984;
+  --color-link-int: #458588;
+  --color-link-float: #83a598;
+  --color-link-bool: #fb4934;
+}

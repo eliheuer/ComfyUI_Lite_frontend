@@ -1,0 +1,54 @@
+/* Nord for Comfy Lite
+ * Arctic, north-bluish color palette
+ * https://www.nordtheme.com/
+ */
+
+/* @meta name = Nord */
+/* @meta author = Arctic Ice Studio */
+/* @meta description = Arctic, north-bluish. Cool, calm, distinctly Scandinavian. */
+/* @meta mood = dark */
+
+:root {
+  /* Surface / text */
+  --color-bg: #2e3440;            /* nord0 — polar night, darkest */
+  --color-surface: #3b4252;       /* nord1 */
+  --color-surface-alt: #434c5e;   /* nord2 */
+  --color-text: #eceff4;          /* nord6 — snow storm, lightest */
+  --color-text-muted: #d8dee9;    /* nord4 */
+  --color-text-disabled: #4c566a; /* nord3 */
+  --color-border: #4c566a;
+  --color-border-strong: #5e81ac; /* nord10 — frost */
+  --color-focus: #88c0d0;         /* nord8 — frost */
+
+  /* State */
+  --color-action: #88c0d0;        /* nord8 — bright cyan */
+  --color-action-fg: #2e3440;
+  --color-danger: #bf616a;        /* nord11 — aurora red */
+  --color-danger-fg: #eceff4;
+  --color-warning: #ebcb8b;       /* nord13 — aurora yellow */
+  --color-success: #a3be8c;       /* nord14 — aurora green */
+
+  /* Canvas */
+  --color-canvas-bg: #242933;
+  --color-canvas-grid: rgb(216 222 233 / 0.04);
+  --color-node-bg: #3b4252;
+  --color-node-header: #434c5e;
+  --color-node-text: #eceff4;
+  --color-node-border: #4c566a;
+  --color-node-selected: #88c0d0;
+  --color-node-error: #bf616a;
+
+  /* Links */
+  --color-link-model: #b48ead;          /* aurora purple */
+  --color-link-image: #88c0d0;          /* frost cyan */
+  --color-link-latent: #b48ead;
+  --color-link-conditioning: #ebcb8b;   /* aurora yellow */
+  --color-link-mask: #a3be8c;           /* aurora green */
+  --color-link-clip: #ebcb8b;
+  --color-link-vae: #bf616a;            /* aurora red */
+  --color-link-control-net: #a3be8c;
+  --color-link-string: #d8dee9;
+  --color-link-int: #5e81ac;            /* frost dark blue */
+  --color-link-float: #81a1c1;          /* frost mid blue */
+  --color-link-bool: #bf616a;
+}

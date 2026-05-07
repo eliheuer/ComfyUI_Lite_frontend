@@ -1,0 +1,54 @@
+/* Tokyo Night for Comfy Lite
+ * A clean, dark theme that celebrates the lights of downtown Tokyo at night
+ * https://github.com/enkia/tokyo-night-vscode-theme
+ */
+
+/* @meta name = Tokyo Night */
+/* @meta author = enkia */
+/* @meta description = Neon-tinged dark theme inspired by downtown Tokyo at night. */
+/* @meta mood = dark */
+
+:root {
+  /* Surface / text */
+  --color-bg: #1a1b26;
+  --color-surface: #24283b;
+  --color-surface-alt: #2f334d;
+  --color-text: #c0caf5;
+  --color-text-muted: #9aa5ce;
+  --color-text-disabled: #565f89;
+  --color-border: #414868;
+  --color-border-strong: #565f89;
+  --color-focus: #7aa2f7;
+
+  /* State */
+  --color-action: #bb9af7;        /* vibrant purple */
+  --color-action-fg: #1a1b26;
+  --color-danger: #f7768e;
+  --color-danger-fg: #1a1b26;
+  --color-warning: #e0af68;
+  --color-success: #9ece6a;
+
+  /* Canvas */
+  --color-canvas-bg: #16161e;
+  --color-canvas-grid: rgb(122 162 247 / 0.04);
+  --color-node-bg: #24283b;
+  --color-node-header: #1f2335;
+  --color-node-text: #c0caf5;
+  --color-node-border: #414868;
+  --color-node-selected: #bb9af7;
+  --color-node-error: #f7768e;
+
+  /* Links */
+  --color-link-model: #bb9af7;          /* purple */
+  --color-link-image: #7dcfff;          /* bright cyan */
+  --color-link-latent: #bb9af7;
+  --color-link-conditioning: #e0af68;   /* orange */
+  --color-link-mask: #9ece6a;           /* green */
+  --color-link-clip: #e0af68;
+  --color-link-vae: #f7768e;            /* pink-red */
+  --color-link-control-net: #9ece6a;
+  --color-link-string: #9aa5ce;
+  --color-link-int: #7aa2f7;            /* blue */
+  --color-link-float: #7dcfff;          /* cyan */
+  --color-link-bool: #f7768e;
+}
