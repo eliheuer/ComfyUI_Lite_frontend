@@ -9,7 +9,8 @@ export const THEMES = [
   'gray',
   'strawberry',
   'mint',
-  'campfire'
+  'campfire',
+  'rainforest'
 ] as const
 
 export type Theme = (typeof THEMES)[number]
@@ -21,10 +22,11 @@ const DEFAULT_THEME: Theme = 'dark'
 const THEME_MOODS: Record<Theme, Mood> = {
   dark: 'dark',
   light: 'light',
-  gray: 'dark',
+  gray: 'light',
   strawberry: 'light',
   mint: 'light',
-  campfire: 'dark'
+  campfire: 'dark',
+  rainforest: 'dark'
 }
 
 const theme = useStorage<Theme>(STORAGE_KEY, DEFAULT_THEME)

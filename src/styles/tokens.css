@@ -176,62 +176,62 @@
  * radii, shadows, and motion are inherited from :root.
  * ============================================================ */
 
-/* --- Light --- neutral light, high contrast --------------------- */
+/* --- Light --- neutral high-contrast, brand-consistent ---------- */
 [data-theme="light"] {
   --color-bg: #fafafa;
   --color-surface: #ffffff;
-  --color-surface-alt: #ececec;
+  --color-surface-alt: #f0f0f0;
   --color-text: #1a1a1a;
-  --color-text-muted: #6b6b6b;
+  --color-text-muted: #6a6a6a;
   --color-text-disabled: #b0b0b0;
   --color-border: #d4d4d4;
   --color-border-strong: #a8a8a8;
-  --color-focus: #c8d800;
+  --color-focus: #2d7a3a;
 
-  --color-action: #c8d800;
-  --color-action-fg: #1a1a1a;
-  --color-danger: #d92626;
+  --color-action: #2d7a3a; /* forest green — matches dark for brand */
+  --color-action-fg: #ffffff;
+  --color-danger: #dc2626;
   --color-danger-fg: #ffffff;
-  --color-warning: #c08000;
-  --color-success: #2d8a3a;
+  --color-warning: #d97706;
+  --color-success: #2d7a3a;
 
-  --color-canvas-bg: #f0f0f0;
+  --color-canvas-bg: #ececec;
   --color-canvas-grid: rgb(0 0 0 / 0.04);
   --color-node-bg: #ffffff;
-  --color-node-header: #ececec;
-  --color-node-text: #333333;
+  --color-node-header: #f0f0f0;
+  --color-node-text: #1a1a1a;
   --color-node-border: #d4d4d4;
-  --color-node-selected: #1a1a1a;
-  --color-node-error: #d92626;
+  --color-node-selected: #2d7a3a;
+  --color-node-error: #dc2626;
 }
 
-/* --- Gray --- mid-neutral, eye-saving --------------------------- */
+/* --- Gray --- VB 2.0 / Win95 silver, light mood ----------------- */
 [data-theme="gray"] {
-  --color-bg: #3a3a3a;
-  --color-surface: #4a4a4a;
-  --color-surface-alt: #555555;
-  --color-text: #e0e0e0;
-  --color-text-muted: #a0a0a0;
-  --color-text-disabled: #707070;
-  --color-border: #666666;
-  --color-border-strong: #808080;
-  --color-focus: #e0d840;
+  --color-bg: #c0c0c0; /* iconic Win95 silver */
+  --color-surface: #d4d4d4;
+  --color-surface-alt: #ffffff; /* input fields white, like VB */
+  --color-text: #000000;
+  --color-text-muted: #555555;
+  --color-text-disabled: #999999;
+  --color-border: #808080; /* mid bevel */
+  --color-border-strong: #404040; /* dark bevel */
+  --color-focus: #1660b6;
 
-  --color-action: #e0d840;
-  --color-action-fg: #2a2a2a;
-  --color-danger: #ff5555;
+  --color-action: #1660b6; /* classic Win95 blue */
+  --color-action-fg: #ffffff;
+  --color-danger: #cc0000;
   --color-danger-fg: #ffffff;
-  --color-warning: #f5b800;
-  --color-success: #6ade8c;
+  --color-warning: #d97706;
+  --color-success: #2d7a3a;
 
-  --color-canvas-bg: #2e2e2e;
-  --color-canvas-grid: rgb(255 255 255 / 0.03);
-  --color-node-bg: #4a4a4a;
-  --color-node-header: #3a3a3a;
-  --color-node-text: #c0c0c0;
-  --color-node-border: #666666;
-  --color-node-selected: #ffffff;
-  --color-node-error: #ff5555;
+  --color-canvas-bg: #c0c0c0;
+  --color-canvas-grid: rgb(0 0 0 / 0.06);
+  --color-node-bg: #d4d4d4;
+  --color-node-header: #c0c0c0;
+  --color-node-text: #000000;
+  --color-node-border: #808080;
+  --color-node-selected: #0a246a;
+  --color-node-error: #cc0000;
 }
 
 /* --- Strawberry --- light, warm pink/red ------------------------ */
@@ -272,61 +272,91 @@
   --color-node-error: #dc2626;
 }
 
-/* --- Mint --- light, cool mint green ---------------------------- */
+/* --- Mint --- fresh mint, spa morning --------------------------- */
 [data-theme="mint"] {
-  --color-bg: #f4fdf6;
-  --color-surface: #e9f8ee;
-  --color-surface-alt: #d3efdb;
-  --color-text: #0f3a1f;
+  --color-bg: #e8f5ec; /* pale mint page */
+  --color-surface: #ffffff; /* white panels pop against mint */
+  --color-surface-alt: #d4ecdb;
+  --color-text: #0f3a1f; /* deep forest text */
   --color-text-muted: #4a7a5a;
-  --color-text-disabled: #a8c8b3;
-  --color-border: #c5e3cf;
-  --color-border-strong: #95c5a5;
-  --color-focus: #16a34a;
+  --color-text-disabled: #95b5a0;
+  --color-border: #95c5a5;
+  --color-border-strong: #6ba87f;
+  --color-focus: #14b76b;
 
-  --color-action: #16a34a;
+  --color-action: #14b76b; /* vibrant mint */
   --color-action-fg: #ffffff;
-  --color-danger: #c12030;
+  --color-danger: #dc2626;
   --color-danger-fg: #ffffff;
-  --color-warning: #d28000;
-  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-success: #14b76b;
 
-  --color-canvas-bg: #e8f5ec;
+  --color-canvas-bg: #e0eee5;
   --color-canvas-grid: rgb(15 58 31 / 0.04);
-  --color-node-bg: #f0faf3;
-  --color-node-header: #d3efdb;
+  --color-node-bg: #ffffff;
+  --color-node-header: #d4ecdb;
   --color-node-text: #0f3a1f;
-  --color-node-border: #c5e3cf;
-  --color-node-selected: #0f3a1f;
+  --color-node-border: #95c5a5;
+  --color-node-selected: #14b76b;
+  --color-node-error: #dc2626;
+}
+
+/* --- Rainforest --- dark mossy greens, earthy browns ------------ */
+[data-theme="rainforest"] {
+  --color-bg: #0e1810; /* deep forest floor */
+  --color-surface: #1a2418; /* mid-canopy panels */
+  --color-surface-alt: #2a3528; /* mossy lighter green */
+  --color-text: #dde7d2; /* warm cream-green, dappled light */
+  --color-text-muted: #8aa888; /* sage moss */
+  --color-text-disabled: #4a5a48;
+  --color-border: #3d4d3a; /* dark moss */
+  --color-border-strong: #5d6e5a;
+  --color-focus: #5cb942;
+
+  --color-action: #5cb942; /* leaf — sun through canopy */
+  --color-action-fg: #0e1810;
+  --color-danger: #c12030; /* poisonous berry */
+  --color-danger-fg: #ffffff;
+  --color-warning: #d4a82d; /* honey amber */
+  --color-success: #5cb942;
+
+  /* Canvas — even deeper than bg, the understory */
+  --color-canvas-bg: #080f0a;
+  --color-canvas-grid: rgb(92 185 66 / 0.04);
+  --color-node-bg: #1a2418;
+  --color-node-header: #0e1810;
+  --color-node-text: #dde7d2;
+  --color-node-border: #3d4d3a;
+  --color-node-selected: #5cb942;
   --color-node-error: #c12030;
 }
 
-/* --- Campfire --- dark, warm amber/orange ----------------------- */
+/* --- Campfire --- warm cozy firelit dark ------------------------ */
 [data-theme="campfire"] {
-  --color-bg: #1a0f0a;
-  --color-surface: #261812;
-  --color-surface-alt: #33221a;
-  --color-text: #f5deb3;
-  --color-text-muted: #c19a6b;
-  --color-text-disabled: #7a5a40;
-  --color-border: #5a3a26;
-  --color-border-strong: #7a5a40;
-  --color-focus: #ff8c00;
+  --color-bg: #1a1208; /* dark warm */
+  --color-surface: #2a1f10;
+  --color-surface-alt: #3a2a18;
+  --color-text: #f4d57a; /* warm wheat — flame-lit cream */
+  --color-text-muted: #a8895a;
+  --color-text-disabled: #6b5a3a;
+  --color-border: #5a4a28;
+  --color-border-strong: #8a7a48;
+  --color-focus: #ff7b1c;
 
-  --color-action: #ff8c00;
-  --color-action-fg: #1a0f0a;
-  --color-danger: #d92626;
+  --color-action: #ff7b1c; /* fire orange — the flame */
+  --color-action-fg: #1a1208;
+  --color-danger: #d92626; /* ember red */
   --color-danger-fg: #ffffff;
-  --color-warning: #ffb84d;
-  --color-success: #b8d860;
+  --color-warning: #d4a82d;
+  --color-success: #d4a82d; /* glowing coal */
 
-  --color-canvas-bg: #140a06;
-  --color-canvas-grid: rgb(255 140 0 / 0.04);
-  --color-node-bg: #2a1a12;
-  --color-node-header: #1a0f0a;
+  --color-canvas-bg: #140d05;
+  --color-canvas-grid: rgb(255 123 28 / 0.04);
+  --color-node-bg: #2a1f10;
+  --color-node-header: #1a1208;
   --color-node-text: #d4b48c;
-  --color-node-border: #5a3a26;
-  --color-node-selected: #ffb84d;
+  --color-node-border: #5a4a28;
+  --color-node-selected: #ff7b1c;
   --color-node-error: #d92626;
 }
 
