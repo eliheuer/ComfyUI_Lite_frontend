@@ -134,15 +134,12 @@ const telemetry = useTelemetry()
 const authStore = useAuthStore()
 let hasTrackedLogin = false
 
+// Lite fork: the legacy `.dark-theme` body-class toggle is now driven
+// by `setBodyMood` in src/composables/useColorScheme.ts. Keeping the
+// electron title-bar update so desktop chrome still recolors.
 watch(
   () => colorPaletteStore.completedActivePalette,
   (newTheme) => {
-    const DARK_THEME_CLASS = 'dark-theme'
-    if (newTheme.light_theme) {
-      document.body.classList.remove(DARK_THEME_CLASS)
-    } else {
-      document.body.classList.add(DARK_THEME_CLASS)
-    }
     if (isDesktop) {
       electronAPI().changeTheme({
         color: 'rgba(0, 0, 0, 0)',

@@ -12,7 +12,11 @@
 // components working through tokens.css.
 import '@/styles/tokens.css'
 
-import { useColorScheme } from '@/composables/useColorScheme'
+import {
+  getBuiltInMood,
+  setBodyMood,
+  useColorScheme
+} from '@/composables/useColorScheme'
 import { installThemeBridge } from '@/services/themeBridge'
 import { app } from '@/scripts/app'
 
@@ -20,12 +24,15 @@ import { app } from '@/scripts/app'
 // `data-theme` attribute on <html> based on the stored preference.
 useColorScheme()
 
-// Install the LiteGraph bridge once the canvas exists. The canvas
-// is created during app.setup(), which runs after this module loads.
-// Poll on rAF until it's ready, then install once.
+// Install the LiteGraph bridge once the canvas exists, AND re-apply
+// the body mood here too. The legacy GraphView.vue still has a watcher
+// that toggles `.dark-theme` based on the legacy palette store; it
+// fires at mount, which happens AFTER our module-load watchEffect.
+// Re-applying after canvas-ready ensures we win the initial-load race.
 function installBridgeWhenReady() {
   if (app.canvas) {
     installThemeBridge()
+    setBodyMood(getBuiltInMood())
   } else {
     requestAnimationFrame(installBridgeWhenReady)
   }

@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 
+import { getBuiltInMood, setBodyMood } from '@/composables/useColorScheme'
 import { api } from '@/scripts/api'
 
 export interface UserThemeMeta {
@@ -116,6 +117,7 @@ export function applyUserTheme(theme: UserTheme): void {
   }
   style.textContent = theme.cssText
   activeUserThemeId.value = theme.id
+  setBodyMood(theme.meta.mood ?? 'dark')
 }
 
 /**
@@ -126,4 +128,5 @@ export function clearUserTheme(): void {
   const style = document.getElementById(STYLE_ID)
   if (style) style.remove()
   activeUserThemeId.value = null
+  setBodyMood(getBuiltInMood())
 }
