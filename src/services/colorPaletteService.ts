@@ -244,6 +244,11 @@ export const useColorPaletteService = () => {
   /**
    * Loads the color palette.
    *
+   * Lite fork note: this is a no-op while the new theme system is in
+   * charge (`src/styles/tokens.css` + `useColorScheme`). The function
+   * is kept callable so existing callers don't error; the entire
+   * service is deleted in step 3 of the theme rewrite.
+   *
    * @param colorPaletteId - The ID of the color palette to load.
    */
   const loadColorPalette = async (colorPaletteId: string) => {
@@ -251,22 +256,8 @@ export const useColorPaletteService = () => {
     if (!colorPalette) {
       throw new Error(`Color palette ${colorPaletteId} not found`)
     }
-
-    const completedPalette = colorPaletteStore.completePalette(colorPalette)
-    loadLinkColorPalette(completedPalette.colors.node_slot)
-    loadLiteGraphColorPalette(completedPalette.colors.litegraph_base)
-    loadLitegraphForVueNodes(
-      completedPalette.colors.litegraph_base,
-      colorPaletteId
-    )
-    loadLinkColorPaletteForVueNodes(completedPalette.colors.node_slot)
-    loadComfyColorPalette(
-      completedPalette.colors.comfy_base,
-      completedPalette.light_theme === true
-    )
-    app.canvas.setDirty(true, true)
-
     colorPaletteStore.activePaletteId = colorPaletteId
+    return
   }
 
   /**
@@ -299,6 +290,15 @@ export const useColorPaletteService = () => {
     await addCustomColorPalette(palette)
     return palette
   }
+
+  // Reference helpers no longer called by the no-op loadColorPalette
+  // so TS noUnusedLocals stays happy. The whole file is deleted in
+  // step 3 of the theme rewrite.
+  void loadLinkColorPalette
+  void loadLiteGraphColorPalette
+  void loadLitegraphForVueNodes
+  void loadLinkColorPaletteForVueNodes
+  void loadComfyColorPalette
 
   return {
     getActiveColorPalette: () => colorPaletteStore.completedActivePalette,
