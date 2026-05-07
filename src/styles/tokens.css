@@ -141,6 +141,13 @@
   --content-hover-bg: var(--color-surface-alt);
   --content-hover-fg: var(--color-text);
   --bar-shadow: var(--shadow-md);
+
+  /* Design-system aliases — packages/design-system/src/css/style.css
+   * defines these and uses them for primary-action visuals (Run
+   * button, progress bars, ✓ indicators). Map them at our --color-action
+   * so theme switches and visual-redesign work flows through here. */
+  --success-background: var(--color-action);
+  --success-foreground: var(--color-action-fg);
 }
 
 /* ============================================================
