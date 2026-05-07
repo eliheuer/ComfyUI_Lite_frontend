@@ -150,24 +150,149 @@
  * radii, shadows, and motion are inherited from :root.
  * ============================================================ */
 
+/* --- Light --- neutral light, high contrast --------------------- */
 [data-theme="light"] {
-  /* TODO: 1c — neutral light theme */
+  --color-bg: #fafafa;
+  --color-surface: #ffffff;
+  --color-surface-alt: #ececec;
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b6b6b;
+  --color-text-disabled: #b0b0b0;
+  --color-border: #d4d4d4;
+  --color-border-strong: #a8a8a8;
+  --color-focus: #c8d800;
+
+  --color-action: #c8d800;
+  --color-action-fg: #1a1a1a;
+  --color-danger: #d92626;
+  --color-danger-fg: #ffffff;
+  --color-warning: #c08000;
+  --color-success: #2d8a3a;
+
+  --color-canvas-bg: #f0f0f0;
+  --color-canvas-grid: rgb(0 0 0 / 0.04);
+  --color-node-bg: #ffffff;
+  --color-node-header: #ececec;
+  --color-node-text: #333333;
+  --color-node-border: #d4d4d4;
+  --color-node-selected: #1a1a1a;
+  --color-node-error: #d92626;
 }
 
+/* --- Gray --- mid-neutral, eye-saving --------------------------- */
 [data-theme="gray"] {
-  /* TODO: 1c — mid-neutral grey */
+  --color-bg: #3a3a3a;
+  --color-surface: #4a4a4a;
+  --color-surface-alt: #555555;
+  --color-text: #e0e0e0;
+  --color-text-muted: #a0a0a0;
+  --color-text-disabled: #707070;
+  --color-border: #666666;
+  --color-border-strong: #808080;
+  --color-focus: #e0d840;
+
+  --color-action: #e0d840;
+  --color-action-fg: #2a2a2a;
+  --color-danger: #ff5555;
+  --color-danger-fg: #ffffff;
+  --color-warning: #f5b800;
+  --color-success: #6ade8c;
+
+  --color-canvas-bg: #2e2e2e;
+  --color-canvas-grid: rgb(255 255 255 / 0.03);
+  --color-node-bg: #4a4a4a;
+  --color-node-header: #3a3a3a;
+  --color-node-text: #c0c0c0;
+  --color-node-border: #666666;
+  --color-node-selected: #ffffff;
+  --color-node-error: #ff5555;
 }
 
+/* --- Strawberry --- light, warm pink/red ------------------------ */
 [data-theme="strawberry"] {
-  /* TODO: 1c — light, warm pink/red */
+  --color-bg: #fff5f7;
+  --color-surface: #ffe9ee;
+  --color-surface-alt: #ffd5dd;
+  --color-text: #4a1929;
+  --color-text-muted: #8c4a5e;
+  --color-text-disabled: #c89eaa;
+  --color-border: #f0bccb;
+  --color-border-strong: #d99cae;
+  --color-focus: #d63762;
+
+  --color-action: #e23c69;
+  --color-action-fg: #ffffff;
+  --color-danger: #c12030;
+  --color-danger-fg: #ffffff;
+  --color-warning: #d28000;
+  --color-success: #2d8a3a;
+
+  --color-canvas-bg: #ffeef2;
+  --color-canvas-grid: rgb(74 25 41 / 0.05);
+  --color-node-bg: #fff0f4;
+  --color-node-header: #ffd5dd;
+  --color-node-text: #4a1929;
+  --color-node-border: #f0bccb;
+  --color-node-selected: #c12030;
+  --color-node-error: #c12030;
 }
 
+/* --- Mint --- light, cool mint green ---------------------------- */
 [data-theme="mint"] {
-  /* TODO: 1c — light, cool mint green */
+  --color-bg: #f4fdf6;
+  --color-surface: #e9f8ee;
+  --color-surface-alt: #d3efdb;
+  --color-text: #0f3a1f;
+  --color-text-muted: #4a7a5a;
+  --color-text-disabled: #a8c8b3;
+  --color-border: #c5e3cf;
+  --color-border-strong: #95c5a5;
+  --color-focus: #16a34a;
+
+  --color-action: #16a34a;
+  --color-action-fg: #ffffff;
+  --color-danger: #c12030;
+  --color-danger-fg: #ffffff;
+  --color-warning: #d28000;
+  --color-success: #16a34a;
+
+  --color-canvas-bg: #e8f5ec;
+  --color-canvas-grid: rgb(15 58 31 / 0.04);
+  --color-node-bg: #f0faf3;
+  --color-node-header: #d3efdb;
+  --color-node-text: #0f3a1f;
+  --color-node-border: #c5e3cf;
+  --color-node-selected: #0f3a1f;
+  --color-node-error: #c12030;
 }
 
+/* --- Campfire --- dark, warm amber/orange ----------------------- */
 [data-theme="campfire"] {
-  /* TODO: 1c — dark, warm amber/orange */
+  --color-bg: #1a0f0a;
+  --color-surface: #261812;
+  --color-surface-alt: #33221a;
+  --color-text: #f5deb3;
+  --color-text-muted: #c19a6b;
+  --color-text-disabled: #7a5a40;
+  --color-border: #5a3a26;
+  --color-border-strong: #7a5a40;
+  --color-focus: #ff8c00;
+
+  --color-action: #ff8c00;
+  --color-action-fg: #1a0f0a;
+  --color-danger: #d92626;
+  --color-danger-fg: #ffffff;
+  --color-warning: #ffb84d;
+  --color-success: #b8d860;
+
+  --color-canvas-bg: #140a06;
+  --color-canvas-grid: rgb(255 140 0 / 0.04);
+  --color-node-bg: #2a1a12;
+  --color-node-header: #1a0f0a;
+  --color-node-text: #d4b48c;
+  --color-node-border: #5a3a26;
+  --color-node-selected: #ffb84d;
+  --color-node-error: #d92626;
 }
 
 /* ============================================================
