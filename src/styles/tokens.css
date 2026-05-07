@@ -157,6 +157,16 @@
   --success-foreground: var(--color-action-fg);
   --color-success-background: var(--color-action);
   --color-success-foreground: var(--color-action-fg);
+
+  /* App-mode layout tokens (packages/design-system/src/css/style.css
+   * lines 46-50). These drive the central canvas backdrop, panel
+   * cells, and app-mode chrome. Bridge to our role tokens so theme
+   * switches reach app-mode. */
+  --color-layout-canvas: var(--color-canvas-bg);
+  --color-layout-cell: var(--color-surface);
+  --color-layout-cell-hover: var(--color-surface-alt);
+  --color-layout-text: var(--color-text);
+  --color-layout-mute: var(--color-text-muted);
 }
 
 /* ============================================================
@@ -226,31 +236,40 @@
 
 /* --- Strawberry --- light, warm pink/red ------------------------ */
 [data-theme="strawberry"] {
-  --color-bg: #fff5f7;
-  --color-surface: #ffe9ee;
-  --color-surface-alt: #ffd5dd;
-  --color-text: #4a1929;
-  --color-text-muted: #8c4a5e;
-  --color-text-disabled: #c89eaa;
-  --color-border: #f0bccb;
-  --color-border-strong: #d99cae;
-  --color-focus: #d63762;
+  /* Pink-dominant cute & hyper — shades from light pink to red. */
+  --color-bg: #fcb5b9; /* light pink page */
+  --color-surface: #ffd6dd; /* pale pink panels */
+  --color-surface-alt: #ffc4ce; /* slightly darker pink for inputs */
 
-  --color-action: #e23c69;
+  /* Dark gray text — the strawberry seeds */
+  --color-text: #1f1f1f;
+  --color-text-muted: #5a4a4d;
+  --color-text-disabled: #b08490;
+  --color-border: #f97e83; /* coral outlines */
+  --color-border-strong: #e84e54;
+
+  /* Hot pink — saturated pop for focus and selection */
+  --color-focus: #ff1493;
+
+  /* Sage leaf green — the strawberry stem; primary action */
+  --color-action: #52a87a;
   --color-action-fg: #ffffff;
-  --color-danger: #c12030;
+
+  /* Strawberry red — reserved for danger */
+  --color-danger: #dc2626;
   --color-danger-fg: #ffffff;
   --color-warning: #d28000;
-  --color-success: #2d8a3a;
+  --color-success: #52a87a;
 
-  --color-canvas-bg: #ffeef2;
-  --color-canvas-grid: rgb(74 25 41 / 0.05);
-  --color-node-bg: #fff0f4;
-  --color-node-header: #ffd5dd;
-  --color-node-text: #4a1929;
-  --color-node-border: #f0bccb;
-  --color-node-selected: #c12030;
-  --color-node-error: #c12030;
+  /* Canvas — pink page with light-pink nodes */
+  --color-canvas-bg: #fcb5b9;
+  --color-canvas-grid: rgb(31 31 31 / 0.05);
+  --color-node-bg: #ffe4ec;
+  --color-node-header: #ffc4ce;
+  --color-node-text: #1f1f1f;
+  --color-node-border: #f97e83;
+  --color-node-selected: #ff1493;
+  --color-node-error: #dc2626;
 }
 
 /* --- Mint --- light, cool mint green ---------------------------- */
