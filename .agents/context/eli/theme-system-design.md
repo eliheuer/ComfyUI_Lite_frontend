@@ -412,20 +412,73 @@ LiteGraph runtime constants get the same treatment (the bridge keeps
 setting them). Internal callers (`groupNode`, `dynamicWidgets`, etc.)
 keep working unchanged.
 
+### Tier 1.5 — custom palette adapter (preserves community themes)
+
+Built-in themes (the 6 colorways) are defined as CSS blocks in
+`tokens.css`. But community-shared custom palettes — JSON files users
+have saved, posted on GitHub, traded on Discord — should keep working.
+
+A small adapter (`src/services/legacyPaletteAdapter.ts`, ~80–100 lines)
+loads a custom palette JSON and translates it into our role tokens by
+calling `style.setProperty('--color-bg', value)` etc. on `:root`. The
+Tier 1 aliases make this transitive: setting `--color-text` updates
+every component reading the legacy `--fg-color`.
+
+Mapping (sketch):
+
+```
+JSON path                                 → role token
+comfy_base.fg-color                       → --color-text
+comfy_base.bg-color                       → --color-bg
+comfy_base.comfy-menu-bg                  → --color-surface
+comfy_base.comfy-menu-secondary-bg        → --color-surface-alt
+comfy_base.border-color                   → --color-border
+comfy_base.descrip-text                   → --color-text-muted
+comfy_base.error-text                     → --color-danger
+node_slot.MODEL                           → --color-link-model
+node_slot.IMAGE                           → --color-link-image
+litegraph_base.CLEAR_BACKGROUND_COLOR     → --color-canvas-bg
+litegraph_base.NODE_DEFAULT_BGCOLOR       → --color-node-bg
+litegraph_base.NODE_TITLE_COLOR           → --color-node-header
+litegraph_base.NODE_TEXT_COLOR            → --color-node-text
+litegraph_base.LINK_COLOR                 → --color-border (canvas links)
+```
+
+What the adapter preserves:
+
+- All `comfy_base` colors (the legacy CSS-var set most themes customize)
+- All `node_slot` colors (link/socket per data type)
+- The most common `litegraph_base` colors (canvas bg, node bg/header/text, link)
+
+What the adapter drops (acceptable):
+
+- `BACKGROUND_IMAGE` — base64 canvas-grid image. Our system uses a single
+  grid color (`--color-canvas-grid`), not a tiled image.
+- `NODE_DEFAULT_SHAPE` — V1 canvas-rendered shape (round/square corners).
+  V2 nodes are Vue, shape comes from CSS. Ignored.
+- Per-node tinting saved on individual nodes — V1 feature, going away.
+- Anything design-language related (typography, spacing, radii) — old
+  palettes don't have these. Custom themes will inherit our defaults.
+
+The custom-palette import UI stays (or simplifies to import-only, no
+export). Built-in themes and custom themes appear side-by-side in the
+theme menu. This is a Step 4 deliverable; tokens.css and the rest of
+Step 1 don't depend on it.
+
 ### Tier 2 — break, with a one-page migration note
 
 These removals are the _point_ of the rewrite; preserving them would
 preserve the disease.
 
-| Removed surface                                                                                         | Replacement                                                                              |
-| ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `Pinia colorPaletteStore`                                                                               | none — extensions wanting the active theme read `document.documentElement.dataset.theme` |
-| `services/colorPaletteService`                                                                          | none — the bridge runs internally, no public API                                         |
-| `colorPaletteSchema` (Zod) and the `node_slot` / `litegraph_base` / `comfy_base` JSON shape             | none — themes are CSS, not JSON                                                          |
-| `Comfy.CustomColorPalettes` setting                                                                     | no-op (key tolerated, value ignored)                                                     |
-| All palette JSONs (`dark.json`, `light.json`, `arc.json`, `nord.json`, `github.json`, `solarized.json`) | replaced by tokens.css blocks                                                            |
-| Custom palette import/export UI                                                                         | removed                                                                                  |
-| The six `*ColorPicker*` components per upstream #8024                                                   | mostly V1-canvas-rendered; deleted along with V1                                         |
+| Removed surface                                                                                              | Replacement                                                                              |
+| ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `Pinia colorPaletteStore`                                                                                    | none — extensions wanting the active theme read `document.documentElement.dataset.theme` |
+| `services/colorPaletteService`                                                                               | none — the bridge runs internally, no public API                                         |
+| `colorPaletteSchema` (Zod) and the `node_slot` / `litegraph_base` / `comfy_base` JSON shape                  | none — themes are CSS, not JSON                                                          |
+| `Comfy.CustomColorPalettes` setting                                                                          | **kept** — loaded via `legacyPaletteAdapter` (Tier 1.5)                                  |
+| Built-in palette JSONs (`dark.json`, `light.json`, `arc.json`, `nord.json`, `github.json`, `solarized.json`) | replaced by tokens.css blocks                                                            |
+| Custom palette import/export UI                                                                              | **kept** — possibly simplified to import-only                                            |
+| The six `*ColorPicker*` components per upstream #8024                                                        | mostly V1-canvas-rendered; deleted along with V1                                         |
 
 `Comfy.ColorPalette` setting key **stays** but its accepted values
 become `'dark' | 'light' | 'gray' | 'strawberry' | 'mint' | 'campfire'`.
@@ -439,11 +492,11 @@ saved IDs just resolve to dark/light.
 
 When the new system lands:
 
-- `src/stores/workspace/colorPaletteStore.ts`
-- `src/services/colorPaletteService.ts`
-- `src/schemas/colorPaletteSchema.ts`
-- `src/constants/coreColorPalettes.ts`
-- `src/assets/palettes/*.json` (all six)
+- `src/stores/workspace/colorPaletteStore.ts` (replaced by `useColorScheme` composable)
+- `src/services/colorPaletteService.ts` (replaced by smaller `legacyPaletteAdapter.ts` for custom palettes only)
+- `src/schemas/colorPaletteSchema.ts` (kept in adapter as a minimal validator for custom-palette JSON)
+- `src/constants/coreColorPalettes.ts` (built-in palettes go to tokens.css)
+- `src/assets/palettes/*.json` (all six built-ins; user-saved custom palettes in `Comfy.CustomColorPalettes` setting are unaffected)
 - `src/platform/settings/components/ColorPaletteMessage.vue`
 - `src/components/common/ColorCustomizationSelector.vue` (V1-related)
 - `src/components/common/FormColorPicker.vue` (if V1 only)
@@ -501,8 +554,10 @@ tests for the new menu surface.
 **Step 4 — visual polish & shadowing.** With the foundation working,
 iterate on the actual look: tune token values against the running app,
 add `lite-overrides.css` rules for things tokens can't reach, shadow
-specific components whose structure should differ. This is the
-open-ended phase where the design language gets refined.
+specific components whose structure should differ. Also build
+`legacyPaletteAdapter.ts` (Tier 1.5) so community-shared custom
+palettes keep working. This is the open-ended phase where the design
+language gets refined.
 
 Step 1 + Step 2 = the minimum visible rewrite. Step 3 is the cleanup
 that removes the old code. Step 4 is where the redesign actually lives.
