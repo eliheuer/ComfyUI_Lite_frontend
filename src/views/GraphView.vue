@@ -97,7 +97,7 @@ import {
 } from '@/stores/queueStore'
 import { useServerConfigStore } from '@/stores/serverConfigStore'
 import { useBottomPanelStore } from '@/stores/workspace/bottomPanelStore'
-import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
+import { useColorScheme } from '@/composables/useColorScheme'
 import { useSidebarTabStore } from '@/stores/workspace/sidebarTabStore'
 import { electronAPI } from '@/utils/envUtil'
 import AppChrome from '@/components/appMode/layout/AppChrome.vue'
@@ -116,7 +116,6 @@ useBrowserTabTitle()
 
 const settingStore = useSettingStore()
 const executionStore = useExecutionStore()
-const colorPaletteStore = useColorPaletteStore()
 const queueStore = useQueueStore()
 const assetsStore = useAssetsStore()
 const versionCompatibilityStore = useVersionCompatibilityStore()
@@ -136,19 +135,24 @@ let hasTrackedLogin = false
 
 // Lite fork: the legacy `.dark-theme` body-class toggle is now driven
 // by `setBodyMood` in src/composables/useColorScheme.ts. Keeping the
-// electron title-bar update so desktop chrome still recolors.
-watch(
-  () => colorPaletteStore.completedActivePalette,
-  (newTheme) => {
-    if (isDesktop) {
+// electron title-bar update so desktop chrome still recolors — drives
+// off our active theme via the --color-text token.
+if (isDesktop) {
+  const { theme } = useColorScheme()
+  watch(
+    theme,
+    () => {
+      const symbolColor = getComputedStyle(document.documentElement)
+        .getPropertyValue('--color-text')
+        .trim()
       electronAPI().changeTheme({
         color: 'rgba(0, 0, 0, 0)',
-        symbolColor: newTheme.colors.comfy_base['input-text']
+        symbolColor
       })
-    }
-  },
-  { immediate: true }
-)
+    },
+    { immediate: true, flush: 'post' }
+  )
+}
 
 /**
  * Reports task completion telemetry to Electron analytics when tasks

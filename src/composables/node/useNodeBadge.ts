@@ -11,7 +11,6 @@ import { app } from '@/scripts/app'
 import { useExtensionStore } from '@/stores/extensionStore'
 import type { ComfyNodeDefImpl } from '@/stores/nodeDefStore'
 import { useNodeDefStore } from '@/stores/nodeDefStore'
-import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
 import { NodeBadgeMode } from '@/types/nodeSource'
 
 /**
@@ -26,7 +25,6 @@ import { NodeBadgeMode } from '@/types/nodeSource'
 export const useNodeBadge = () => {
   const settingStore = useSettingStore()
   const extensionStore = useExtensionStore()
-  const colorPaletteStore = useColorPaletteStore()
   const priceBadge = usePriceBadge()
 
   const nodeSourceBadgeMode = computed(
@@ -110,12 +108,10 @@ export const useNodeBadge = () => {
                 length: 31
               }
             ),
-            fgColor:
-              colorPaletteStore.completedActivePalette.colors.litegraph_base
-                .BADGE_FG_COLOR,
-            bgColor:
-              colorPaletteStore.completedActivePalette.colors.litegraph_base
-                .BADGE_BG_COLOR
+            // Lite fork: badges drawn on LiteGraph canvas can't read
+            // CSS vars; hardcoding the legacy defaults. Tunable later.
+            fgColor: '#FFF',
+            bgColor: '#0F1F0F'
           })
         })
 

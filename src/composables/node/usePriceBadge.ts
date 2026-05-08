@@ -1,8 +1,6 @@
 import { useDarkMood } from '@/composables/useColorScheme'
 import type { LGraph, LGraphNode } from '@/lib/litegraph/src/litegraph'
 import { LGraphBadge } from '@/lib/litegraph/src/litegraph'
-
-import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
 import { adjustColor } from '@/utils/colorUtil'
 
 const componentIconSvg = new Image()
@@ -44,7 +42,6 @@ export const usePriceBadge = () => {
     return badgeInstance.icon?.image === componentIconSvg
   }
 
-  const colorPaletteStore = useColorPaletteStore()
   const isDarkMood = useDarkMood()
   function getCreditsBadge(price: string): LGraphBadge {
     const isLightTheme = !isDarkMood.value
@@ -55,9 +52,9 @@ export const usePriceBadge = () => {
         image: componentIconSvg,
         size: 8
       },
-      fgColor:
-        colorPaletteStore.completedActivePalette.colors.litegraph_base
-          .BADGE_FG_COLOR,
+      // Lite fork: badge fg hardcoded to legacy default (canvas can't
+      // read CSS vars). Tunable later.
+      fgColor: '#FFF',
       bgColor: isLightTheme
         ? adjustColor('#8D6932', { lightness: 0.5 })
         : '#8D6932'

@@ -10,7 +10,7 @@ import type { IBaseWidget } from '@/lib/litegraph/src/types/widgets'
 import { useCanvasStore } from '@/renderer/core/canvas/canvasStore'
 import { augmentToCanvasPointerEvent } from '@/renderer/extensions/vueNodes/utils/eventUtils'
 import { resolveWidgetFromHostNode } from '@/renderer/extensions/vueNodes/widgets/utils/resolvePromotedWidget'
-import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
+import { useColorScheme } from '@/composables/useColorScheme'
 import type { SimplifiedWidget } from '@/types/simplifiedWidget'
 
 const props = defineProps<{
@@ -65,7 +65,7 @@ onMounted(() => {
   bindWidget()
   if (!widgetInstance) return
   useResizeObserver(canvasEl.value.parentElement, draw)
-  watch(() => useColorPaletteStore().activePaletteId, draw)
+  watch(useColorScheme().theme, draw)
   pointer = new CanvasPointer(canvasEl.value)
 })
 onBeforeUnmount(() => {

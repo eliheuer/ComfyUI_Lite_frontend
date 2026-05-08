@@ -99,7 +99,6 @@ import { useVueFeatureFlags } from '@/composables/useVueFeatureFlags'
 import LGraphNodePreview from '@/renderer/extensions/vueNodes/components/LGraphNodePreview.vue'
 import type { ComfyNodeDef as ComfyNodeDefV2 } from '@/schemas/nodeDef/nodeDefSchemaV2'
 import { useWidgetStore } from '@/stores/widgetStore'
-import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
 import { renderMarkdownToHtml } from '@/utils/markdownRendererUtil'
 
 const { nodeDef, position = 'absolute' } = defineProps<{
@@ -109,10 +108,17 @@ const { nodeDef, position = 'absolute' } = defineProps<{
 
 const { shouldRenderVueNodes } = useVueFeatureFlags()
 
-const colorPaletteStore = useColorPaletteStore()
-const litegraphColors = computed(
-  () => colorPaletteStore.completedActivePalette.colors.litegraph_base
-)
+// Lite fork: legacy LiteGraph palette colors mapped to our role
+// tokens. Static `var(...)` references — the CSS cascade handles
+// theme switching reactively.
+const litegraphColors = {
+  NODE_DEFAULT_COLOR: 'var(--color-node-border)',
+  NODE_TITLE_COLOR: 'var(--color-node-header)',
+  NODE_TEXT_COLOR: 'var(--color-node-text)',
+  WIDGET_SECONDARY_TEXT_COLOR: 'var(--color-text-muted)',
+  WIDGET_TEXT_COLOR: 'var(--color-text)',
+  WIDGET_BGCOLOR: 'var(--color-surface-alt)'
+}
 
 const widgetStore = useWidgetStore()
 
