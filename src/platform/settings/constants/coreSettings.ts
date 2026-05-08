@@ -1,5 +1,5 @@
 import { LinkMarkerShape, LiteGraph } from '@/lib/litegraph/src/litegraph'
-import { isCloud, isDesktop, isNightly } from '@/platform/distribution/types'
+import { isCloud, isNightly } from '@/platform/distribution/types'
 import { useSettingStore } from '@/platform/settings/settingStore'
 import type { SettingParams } from '@/platform/settings/types'
 import type { ColorPalettes } from '@/schemas/colorPaletteSchema'
@@ -1201,11 +1201,9 @@ export const CORE_SETTINGS: SettingParams[] = [
     name: 'Modern Node Design (Nodes 2.0)',
     type: 'boolean',
     tooltip:
-      'Modern: DOM-based rendering with enhanced interactivity, native browser features, and updated visual design. Classic: Traditional canvas rendering.',
-    defaultValue: false,
-    defaultsByInstallVersion: { '1.41.0': isCloud || isDesktop },
+      'Modern: DOM-based rendering with enhanced interactivity, native browser features, and updated visual design. Classic: Traditional canvas rendering. Lite fork: V2 is the default; V1 will be removed in a future cleanup.',
+    defaultValue: true,
     sortOrder: 100,
-    experimental: true,
     versionAdded: '1.27.1'
   },
   {
