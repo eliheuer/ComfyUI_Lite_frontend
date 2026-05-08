@@ -4,20 +4,26 @@ Status: draft. Owner: Eli.
 
 ## Motivation
 
-A Rust + Vello + WebGPU canvas engine inside the Lite frontend. The
-engine hosts multiple **tools** (sketch first; raster compositor and
-vector editor later) that all share the same WASM blob, the same
-renderer, the same undo/history infrastructure, the same Vue host
-component.
+A Rust + Vello + WebGPU canvas engine inside the Lite frontend.
+**This is a platform play, not a tool.** The engine hosts multiple
+**tools** that all share the same WASM blob, the same renderer, the
+same undo/history infrastructure, the same Vue host component.
 
-The differentiator versus the existing ComfyUI ecosystem is the
-**stack**, not the feature. There are already sketch nodes (Olm-Sketch,
-ComfySketch), layered editors (LayerForge, Comfy Canvas), and basic
-painters (PainterNode). All are pure JS. None use Rust/WASM/WebGPU.
+By the end of Phase 3 of the rollout below, the standalone canvas
+dialog hosts **three tools** — sketch, vector edit, raster compositor —
+sharing one engine. **No existing ComfyUI extension does this.**
+Existing sketch/canvas tools (Olm-Sketch, LayerForge, Comfy Canvas,
+ComfyI2I, PainterNode) are each pure-JS and ship one feature each.
+The differentiator is _the integrated platform_, not any single tool.
 
-The strategic bet: building a Vello-backed canvas engine pays back
-across many features (sketch, compositor, vector edit, future image
-filters) instead of paying for a one-shot tool.
+A bare-minimum sketch tool by itself isn't meaningfully better than
+Olm-Sketch. The engine's payoff appears when sketch + vector +
+compositor + (future image filters) all share the same paid-for
+foundation.
+
+The phase ordering below is **engine + tools first, deeper integrations
+later** — so the platform identity is visible by Phase 3 even before
+the engine reaches into graph view and app mode.
 
 ## Top constraint: minimum sync overlap
 
@@ -133,8 +139,8 @@ Adding a new tool = implementing the `Tool` trait, registering it,
 | Composition                   | Raw WASM | Gzipped |
 | ----------------------------- | -------- | ------- |
 | Phase 1 (foundation + sketch) | ~1.8 MB  | ~700 KB |
-| Phase 4 (+ composite tool)    | ~1.95 MB | ~770 KB |
-| Phase 5 (+ vector tool)       | ~2.05 MB | ~810 KB |
+| Phase 2 (+ vector tool)       | ~1.9 MB  | ~750 KB |
+| Phase 3 (+ composite tool)    | ~2.05 MB | ~810 KB |
 
 Renderer dominates; tools are incremental.
 
@@ -162,28 +168,52 @@ Toolbar contents (Phase 1):
 The saved PNG appears in the Assets sidebar via the existing
 `/userdata` file-watch path (no backend code needed).
 
-### Phase 2: node widget (graph view)
+### Phase 2: vector tool
 
-A new V2 node widget type `sketch_input` that mounts `LiteCanvas`
-inline. Used by a companion Python custom node `LiteSketchInput`.
-User sketches → click Run → diffusion uses sketch as ControlNet/img2img
-input.
+Same dialog, switch tool → bezier editor for SVG paths. Subsumes the
+separate `svg-editor.md` plan. The differentiated feature — no other
+ComfyUI extension edits bezier paths.
 
-### Phase 3: app-mode input cell
-
-Workflow author exposes a sketch input parameter; app-mode renders it
-as a `LiteCanvasCell` in the right-side input panel. Scoped to fit the
-cell bounds (small canvas), expandable to fullscreen on click.
-
-### Phase 4: composite tool
+### Phase 3: composite tool
 
 Same dialog, switch tool → multi-layer image compositor (load images
 as layers, blend modes, opacity, simple filters).
 
-### Phase 5: vector tool
+By the end of Phase 3 the dialog hosts three tools on one engine —
+the platform identity is now visible.
 
-Same dialog, switch tool → bezier editor for SVG paths. Subsumes the
-separate `svg-editor.md` plan.
+### Phase 4: node widget (graph view)
+
+A new V2 node widget type `sketch_input` (or `canvas_input`) that
+mounts `LiteCanvas` inline. Used by a companion Python custom node
+`LiteSketchInput`. User sketches → click Run → diffusion uses the
+canvas content as ControlNet/img2img input.
+
+### Phase 5: app-mode input cell
+
+Workflow author exposes a canvas input parameter; app-mode renders it
+as a `LiteCanvasCell` in the right-side input panel. Scoped to fit the
+cell bounds (small canvas), expandable to fullscreen on click.
+
+### Visible platform identity
+
+Even at Phase 1, small touches make the platform feel like a platform:
+
+- **Subtle "Powered by Rust + WebGPU" footer** in the dialog. Tasteful,
+  not a banner — credit the stack so users notice it's different.
+- **Real-time perf indicators** during drawing: FPS, stroke count,
+  paths/sec. Off by default, on via a settings toggle.
+- **Crisp anti-aliased strokes at any zoom.** Vello stays sharp where
+  Canvas 2D goes blurry. Make zooming a visible "this feels different"
+  moment.
+- **Smoother pan/zoom** than typical JS canvases — the kind of thing
+  that just _feels_ fast.
+- **Tool switcher in the dialog** that lists all available tools (even
+  unimplemented ones in coming-soon state) so users see the platform
+  scope from day one.
+
+These are technically quality features, but they're how the platform
+_announces itself_ even when only one tool is shipped.
 
 ## Toolchain
 
@@ -210,7 +240,7 @@ that wasm-pack generates.
 3. **History format.** Snapshot per stroke (simple, slow at scale) vs
    delta-events with replay (complex, fast). Lean toward delta-events.
 4. **Color management.** Vello supports wide-gamut natively; do we
-   expose this in v1 sketch tool, or punt to Phase 4? Punt.
+   expose this in v1 sketch tool, or punt to Phase 3? Punt.
 5. **Mobile / touch.** First-class touch + stylus from day one
    (MaskEditor's "ignore touch" was a mistake we don't repeat).
 6. **Save target.** `<comfy>/user/default/sketches/` for v1 — surfaces
@@ -300,7 +330,38 @@ that wasm-pack generates.
 - [ ] Playwright e2e test (mirror `MaskEditorHelper.ts` pattern)
 - [ ] Commit polish
 
-### Phase 2 — Node widget (graph view)
+### Phase 2 — Vector tool
+
+This is where the platform starts to differentiate. No other ComfyUI
+extension edits bezier paths.
+
+- [ ] Implement `tools/vector.rs`: bezier path representation,
+      control point editing
+- [ ] Port `runebender-xilem` pieces (path types, hit-testing,
+      selection, edit operations) — see `svg-editor.md`
+- [ ] SVG import (`io/svg.rs` parse → kurbo `BezPath`)
+- [ ] SVG export
+- [ ] Pen, knife, select tools
+- [ ] Tool switcher UI in dialog (sketch ↔ vector)
+- [ ] Subsume `svg-editor.md` plan (this becomes the "tool" surface;
+      the Assets-menu integration described in `svg-editor.md` is the
+      trigger)
+- [ ] Commit Phase 2
+
+### Phase 3 — Composite tool
+
+By the end of Phase 3 the dialog hosts three tools — the platform
+identity is publicly visible.
+
+- [ ] Implement `tools/composite.rs`: layer model with blend modes
+- [ ] Layer panel UI in dialog (add image layer, opacity, blend
+      mode dropdown, visibility toggle)
+- [ ] Filter primitives: gaussian blur, brightness, contrast, hue
+- [ ] Sample images bundled in `examples/composite-samples/`
+- [ ] Tool switcher updated for three tools
+- [ ] Commit Phase 3
+
+### Phase 4 — Node widget (graph view)
 
 - [ ] Research V2 widget extension API (how custom widget types
       register)
@@ -312,39 +373,16 @@ that wasm-pack generates.
       `install-lite-themes.sh`)
 - [ ] Sample workflow `sketch_to_image.app.json` demonstrating use
 - [ ] e2e test: drop node, sketch in widget, run workflow
-- [ ] Commit Phase 2
+- [ ] Commit Phase 4
 
-### Phase 3 — App-mode input cell
+### Phase 5 — App-mode input cell
 
 - [ ] Research app-mode cell registration system (PR territory —
       may need bridge pattern to avoid PR conflicts)
 - [ ] Build `LiteCanvasCell.vue` for app-mode panel
-- [ ] Workflow author exposes sketch input → app-mode renders cell
+- [ ] Workflow author exposes canvas input → app-mode renders cell
 - [ ] e2e test in app mode
-- [ ] Commit Phase 3 (with care for PR sync)
-
-### Phase 4 — Composite tool
-
-- [ ] Implement `tools/composite.rs`: layer model with blend modes
-- [ ] Layer panel UI in dialog (add image layer, opacity, blend
-      mode dropdown, visibility toggle)
-- [ ] Filter primitives: gaussian blur, brightness, contrast, hue
-- [ ] Sample images bundled in `examples/composite-samples/`
-- [ ] Commit Phase 4
-
-### Phase 5 — Vector tool
-
-- [ ] Implement `tools/vector.rs`: bezier path representation,
-      control point editing
-- [ ] Port `runebender-xilem` pieces (path types, hit-testing,
-      selection, edit operations) — see `svg-editor.md`
-- [ ] SVG import (`io/svg.rs` parse → kurbo `BezPath`)
-- [ ] SVG export
-- [ ] Pen, knife, select tools
-- [ ] Subsume `svg-editor.md` plan (this becomes the "tool" surface;
-      the Assets-menu integration described in `svg-editor.md` is the
-      trigger)
-- [ ] Commit Phase 5
+- [ ] Commit Phase 5 (with care for PR sync)
 
 ## What this design deliberately does not include
 
@@ -355,7 +393,7 @@ that wasm-pack generates.
 - **Plugin/scripting system for tools** — tools are first-class Rust
   modules in our crate. No runtime plugin API.
 - **Color management UI for v1** — wide-gamut/HDR is supported by
-  Vello but not exposed in user UI until Phase 4+.
+  Vello but not exposed in user UI until Phase 3+.
 - **Cloud sync of sketches** — sketches save to local user data dir.
   Cloud is upstream territory.
 - **Replacing MaskEditor** — MaskEditor stays as it is. Our canvas
@@ -377,10 +415,11 @@ that wasm-pack generates.
 - **Performance surprises.** WebGPU shaders behave differently across
   GPUs (Apple Silicon vs Intel vs AMD). Test on multiple machines
   before declaring done.
-- **App-mode integration (Phase 3) overlaps with PR territory.**
-  Defer until foundation is solid; cross that bridge when we get
-  there with the layered-architecture defenses already established
-  (see `theme-system-design.md`).
+- **App-mode integration (Phase 5) overlaps with PR territory.**
+  Deferred to last for that reason; the engine and three tools all
+  ship before we cross this bridge. By then the layered-architecture
+  defenses (see `theme-system-design.md`) and the conflict-cheap
+  patterns we've established make it tractable.
 
 ## Ecosystem comparisons
 
@@ -418,6 +457,6 @@ What exists in the broader web ecosystem (great learning resources):
 - wasm-pack: <https://github.com/rustwasm/wasm-pack>
 - typegpu (used by MaskEditor): <https://typegpu.com/>
 - MaskEditor in this repo: `src/components/maskeditor/`
-- Related plan (subsumed in Phase 5): `.agents/context/eli/svg-editor.md`
+- Related plan (subsumed in Phase 2): `.agents/context/eli/svg-editor.md`
 - Theme architecture (sync-overlap defense pattern):
   `.agents/context/eli/theme-system-design.md`
