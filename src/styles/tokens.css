@@ -167,6 +167,51 @@
   --color-layout-cell-hover: var(--color-surface-alt);
   --color-layout-text: var(--color-text);
   --color-layout-mute: var(--color-text-muted);
+
+  /* PrimeVue token bridges — drive PrimeVue components (dialogs,
+   * dropdowns, buttons, popovers, inputs) from our role tokens. The
+   * Aura preset defines these via `--p-*` CSS vars; overriding here
+   * lets the [data-theme] cascade propagate to all PrimeVue chrome. */
+  --p-text-color: var(--color-text);
+  --p-text-muted-color: var(--color-text-muted);
+  --p-text-hover-color: var(--color-text);
+  --p-text-hover-muted-color: var(--color-text);
+
+  --p-content-background: var(--color-surface);
+  --p-content-hover-background: var(--color-surface-alt);
+  --p-content-color: var(--color-text);
+  --p-content-hover-color: var(--color-text);
+  --p-content-border-color: var(--color-border);
+
+  --p-primary-color: var(--color-action);
+  --p-primary-contrast-color: var(--color-action-fg);
+  --p-primary-hover-color: var(--color-action);
+  --p-primary-active-color: var(--color-action);
+
+  --p-form-field-background: var(--color-surface-alt);
+  --p-form-field-disabled-background: var(--color-surface-alt);
+  --p-form-field-filled-background: var(--color-surface-alt);
+  --p-form-field-border-color: var(--color-border);
+  --p-form-field-hover-border-color: var(--color-border-strong);
+  --p-form-field-focus-border-color: var(--color-focus);
+  --p-form-field-color: var(--color-text);
+  --p-form-field-disabled-color: var(--color-text-disabled);
+  --p-form-field-placeholder-color: var(--color-text-muted);
+
+  --p-overlay-modal-background: var(--color-surface);
+  --p-overlay-modal-border-color: var(--color-border);
+  --p-overlay-modal-color: var(--color-text);
+  --p-overlay-popover-background: var(--color-surface);
+  --p-overlay-popover-border-color: var(--color-border);
+  --p-overlay-popover-color: var(--color-text);
+
+  --p-list-background: var(--color-surface);
+  --p-list-border-color: var(--color-border);
+  --p-list-color: var(--color-text);
+  --p-list-option-background-active: var(--color-surface-alt);
+  --p-list-option-background-focus: var(--color-surface-alt);
+  --p-list-option-color: var(--color-text);
+  --p-list-option-color-focus: var(--color-text);
 }
 
 /* ============================================================
