@@ -1,4 +1,4 @@
-import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
+import { useDarkMood } from '@/composables/useColorScheme'
 import { adjustColor } from '@/utils/colorUtil'
 
 /**
@@ -7,7 +7,7 @@ import { adjustColor } from '@/utils/colorUtil'
 export function applyLightThemeColor(color?: string): string {
   if (!color) return ''
 
-  if (!useColorPaletteStore().completedActivePalette.light_theme) return color
+  if (useDarkMood().value) return color
 
   return adjustColor(color, { lightness: 0.5 })
 }

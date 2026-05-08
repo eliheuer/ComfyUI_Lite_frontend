@@ -14,17 +14,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
+import { useDarkMood } from '@/composables/useColorScheme'
 
-const colorPaletteStore = useColorPaletteStore()
+const isDarkMood = useDarkMood()
 const { orientation = 'horizontal', width = 0.3 } = defineProps<{
   orientation?: 'horizontal' | 'vertical'
   width?: number
 }>()
 
-const isLightTheme = computed(
-  () => colorPaletteStore.completedActivePalette.light_theme
-)
+const isLightTheme = computed(() => !isDarkMood.value)
 </script>
 
 <style scoped>

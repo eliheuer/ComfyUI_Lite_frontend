@@ -1,6 +1,6 @@
+import { useDarkMood } from '@/composables/useColorScheme'
 import type { LGraph } from '@/lib/litegraph/src/litegraph'
 import { LGraphEventMode } from '@/lib/litegraph/src/litegraph'
-import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
 import { adjustColor } from '@/utils/colorUtil'
 
 import { MinimapDataSourceFactory } from './data/MinimapDataSourceFactory'
@@ -14,8 +14,7 @@ import type {
  * Get theme-aware colors for the minimap
  */
 function getMinimapColors() {
-  const colorPaletteStore = useColorPaletteStore()
-  const isLightTheme = colorPaletteStore.completedActivePalette.light_theme
+  const isLightTheme = !useDarkMood().value
 
   return {
     nodeColor: isLightTheme ? '#3DA8E099' : '#0B8CE999',

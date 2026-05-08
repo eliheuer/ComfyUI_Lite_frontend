@@ -2,6 +2,7 @@ import { useCurrentUser } from '@/composables/auth/useCurrentUser'
 import { useAuthActions } from '@/composables/auth/useAuthActions'
 import { useSelectedLiteGraphItems } from '@/composables/canvas/useSelectedLiteGraphItems'
 import { useSubgraphOperations } from '@/composables/graph/useSubgraphOperations'
+import { useDarkMood } from '@/composables/useColorScheme'
 import { useExternalLink } from '@/composables/useExternalLink'
 import { useModelSelectorDialog } from '@/composables/useModelSelectorDialog'
 import {
@@ -718,8 +719,9 @@ export function useCoreCommands(): ComfyCommand[] {
 
         return async () => {
           const settingStore = useSettingStore()
+          const isDarkMood = useDarkMood()
           const theme = colorPaletteStore.completedActivePalette
-          if (theme.light_theme) {
+          if (!isDarkMood.value) {
             previousLightTheme = theme.id
             await settingStore.set('Comfy.ColorPalette', previousDarkTheme)
           } else {

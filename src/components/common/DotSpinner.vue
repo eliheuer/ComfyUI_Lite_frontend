@@ -98,18 +98,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
+import { useDarkMood } from '@/composables/useColorScheme'
 
 const { size = 24, duration = '2s' } = defineProps<{
   size?: number
   duration?: string
 }>()
 
-const colorPaletteStore = useColorPaletteStore()
+const isDarkMood = useDarkMood()
 
-const color = computed(() =>
-  colorPaletteStore.completedActivePalette.light_theme ? '#2C2B30' : '#D4D4D4'
-)
+const color = computed(() => (isDarkMood.value ? '#D4D4D4' : '#2C2B30'))
 </script>
 
 <style scoped>

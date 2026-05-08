@@ -1,3 +1,4 @@
+import { useDarkMood } from '@/composables/useColorScheme'
 import type { LGraph, LGraphNode } from '@/lib/litegraph/src/litegraph'
 import { LGraphBadge } from '@/lib/litegraph/src/litegraph'
 
@@ -44,8 +45,9 @@ export const usePriceBadge = () => {
   }
 
   const colorPaletteStore = useColorPaletteStore()
+  const isDarkMood = useDarkMood()
   function getCreditsBadge(price: string): LGraphBadge {
-    const isLightTheme = colorPaletteStore.completedActivePalette.light_theme
+    const isLightTheme = !isDarkMood.value
 
     return new LGraphBadge({
       text: price,
