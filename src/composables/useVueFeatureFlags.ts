@@ -1,36 +1,21 @@
 /**
- * Vue-related feature flags composable
- * Manages local settings-driven flags and LiteGraph integration
+ * Vue-related feature flags composable.
+ *
+ * Lite fork: V1 nodes are dropped; V2 (Vue-rendered) is the only
+ * supported mode. `shouldRenderVueNodes` always returns true. The
+ * `Comfy.VueNodes.Enabled` setting still exists but the toggle no
+ * longer has any effect; the setting will be removed in a follow-up.
  */
 import { createSharedComposable } from '@vueuse/core'
-import { computed, watch } from 'vue'
-
-import { useSettingStore } from '@/platform/settings/settingStore'
+import { computed } from 'vue'
 
 import { LiteGraph } from '../lib/litegraph/src/litegraph'
 
+LiteGraph.vueNodesMode = true
+
 function useVueFeatureFlagsIndividual() {
-  const settingStore = useSettingStore()
-
-  const shouldRenderVueNodes = computed(() => {
-    try {
-      return settingStore.get('Comfy.VueNodes.Enabled') ?? false
-    } catch {
-      return false
-    }
-  })
-
-  // Watch for changes and update LiteGraph immediately
-  watch(
-    shouldRenderVueNodes,
-    () => {
-      LiteGraph.vueNodesMode = shouldRenderVueNodes.value
-    },
-    { immediate: true }
-  )
-
   return {
-    shouldRenderVueNodes
+    shouldRenderVueNodes: computed(() => true)
   }
 }
 
