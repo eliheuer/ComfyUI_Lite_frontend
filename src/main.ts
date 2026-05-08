@@ -1,4 +1,3 @@
-import { definePreset } from '@primevue/themes'
 import Aura from '@primevue/themes/aura'
 import * as Sentry from '@sentry/vue'
 import { initializeApp } from 'firebase/app'
@@ -43,13 +42,6 @@ if (isCloud) {
   await initTelemetry()
 }
 
-const ComfyUIPreset = definePreset(Aura, {
-  semantic: {
-    // @ts-expect-error fixme ts strict error
-    primary: Aura['primitive'].blue
-  }
-})
-
 const firebaseApp = initializeApp(getFirebaseConfig())
 
 const app = createApp(App)
@@ -89,7 +81,10 @@ app
   .use(router)
   .use(PrimeVue, {
     theme: {
-      preset: ComfyUIPreset,
+      // Lite fork: PrimeVue uses Aura's structure, but our --p-* tokens
+      // in src/styles/tokens.css override the visible colors via the
+      // [data-theme] cascade. No preset-level overrides needed.
+      preset: Aura,
       options: {
         prefix: 'p',
         cssLayer: {
