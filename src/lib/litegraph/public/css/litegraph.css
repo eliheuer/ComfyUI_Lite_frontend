@@ -17,10 +17,10 @@
   top: 100px;
   left: 100px;
   min-width: 100px;
-  color: #aaf;
+  color: var(--color-action);
   padding: 0;
-  box-shadow: 0 0 10px black;
-  background-color: #2e2e2e;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.5);
+  background-color: var(--color-surface);
   z-index: 10;
   max-height: -webkit-fill-available;
   overflow-y: auto;
@@ -52,7 +52,7 @@
 
 .litegraph .litemenubar li {
   font-size: 14px;
-  color: #999;
+  color: var(--color-text-muted);
   display: inline-block;
   min-width: 50px;
   padding-left: 10px;
@@ -64,8 +64,8 @@
 }
 
 .litegraph .litemenubar li:hover {
-  background-color: #777;
-  color: #eee;
+  background-color: var(--color-surface-alt);
+  color: var(--color-text);
 }
 
 .litegraph .litegraph .litemenubar-panel {
@@ -73,17 +73,17 @@
   top: 5px;
   left: 5px;
   min-width: 100px;
-  background-color: #444;
-  box-shadow: 0 0 3px black;
+  background-color: var(--color-surface-alt);
+  box-shadow: 0 0 3px rgb(0 0 0 / 0.5);
   padding: 4px;
-  border-bottom: 2px solid #aaf;
+  border-bottom: 2px solid var(--color-action);
   z-index: 10;
 }
 
 .litegraph .litemenu-entry,
 .litemenu-title {
   font-size: 12px;
-  color: #aaa;
+  color: var(--color-text);
   padding: 0 0 0 4px;
   margin: 2px;
   padding-left: 2px;
@@ -102,7 +102,7 @@
 }
 
 .litegraph .litemenu-entry.checked .icon {
-  background-color: #aaf;
+  background-color: var(--color-action);
 }
 
 .litegraph .litemenu-entry .more {
@@ -127,12 +127,12 @@
 }
 
 .litegraph .litemenu-entry.has_submenu {
-  border-right: 2px solid cyan;
+  border-right: 2px solid var(--color-action);
 }
 
 .litegraph .litemenu-title {
-  color: #dde;
-  background-color: #111;
+  color: var(--color-text);
+  background-color: var(--color-bg);
   margin: 0;
   padding: 2px;
   cursor: default;
@@ -153,7 +153,7 @@
 
 .litegraph .litemenu-entry .property_value {
   display: inline-block;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--color-surface-alt);
   text-align: right;
   min-width: 80px;
   min-height: 1.2em;
@@ -163,7 +163,7 @@
 
 .litegraph.litesearchbox {
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--color-surface-alt);
   padding-top: 4px;
 }
 
@@ -172,9 +172,9 @@
   margin-top: 3px;
   min-width: 60px;
   min-height: 1.5em;
-  background-color: black;
+  background-color: var(--color-surface-alt);
   border: 0;
-  color: white;
+  color: var(--color-text);
   padding-left: 10px;
   margin-right: 5px;
   max-width: 300px;
@@ -194,35 +194,35 @@
 }
 
 .litegraph.lite-search-item {
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
+  background-color: var(--color-surface-alt);
+  color: var(--color-text);
   padding-top: 2px;
 }
 
 .litegraph.lite-search-item.not_in_filter {
   /*background-color: rgba(50, 50, 50, 0.5);*/
-  /*color: #999;*/
-  color: #b99;
+  /*color: var(--color-text-muted);*/
+  color: var(--color-text-muted);
   font-style: italic;
 }
 
 .litegraph.lite-search-item.generic_type {
   /*background-color: rgba(50, 50, 50, 0.5);*/
   /*color: #DD9;*/
-  color: #999;
+  color: var(--color-text-muted);
   font-style: italic;
 }
 
 .litegraph.lite-search-item:hover,
 .litegraph.lite-search-item.selected {
   cursor: pointer;
-  background-color: white;
-  color: black;
+  background-color: var(--color-action);
+  color: var(--color-action-fg);
 }
 
 .litegraph.lite-search-item-type {
   display: inline-block;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--color-surface-alt);
   margin-left: 5px;
   font-size: 14px;
   padding: 2px 5px;
@@ -246,7 +246,7 @@
 
   min-width: 400px;
   min-height: 200px;
-  box-shadow: 0 0 4px #111;
+  box-shadow: 0 0 4px rgb(0 0 0 / 0.4);
   border-radius: 6px;
 }
 
@@ -278,7 +278,7 @@
 }
 
 .litegraph .dialog .close:hover {
-  color: white;
+  color: var(--color-text);
 }
 
 .litegraph .dialog .dialog-header {
@@ -308,7 +308,7 @@
   width: 100%;
   min-height: 100px;
   display: inline-block;
-  /* color: #aaa; */
+  /* color: var(--color-text); */
   /*background-color: black;*/
   overflow: auto;
 }
@@ -324,7 +324,7 @@
 .litegraph .dialog .dialog-content .connections .connections_side {
   width: calc(50% - 5px);
   min-height: 100px;
-  background-color: black;
+  background-color: var(--color-canvas-bg);
   display: flex;
 }
 
@@ -366,7 +366,7 @@
 }
 
 .litegraph .dialog .property:hover .property_name {
-  color: white;
+  color: var(--color-text);
 }
 
 .litegraph .dialog .property_value {
@@ -387,21 +387,21 @@
 }
 
 .litegraph .dialog .property_value:hover {
-  color: white;
+  color: var(--color-text);
 }
 
 .litegraph .dialog .property.boolean .property_value {
   padding-right: 30px;
-  color: #a88;
+  color: var(--color-text-muted);
   /*width: auto;
     float: right;*/
 }
 
 .litegraph .dialog .property.boolean.bool-on .property_name {
-  color: #8a8;
+  color: var(--color-success);
 }
 .litegraph .dialog .property.boolean.bool-on .property_value {
-  color: #8a8;
+  color: var(--color-success);
 }
 
 .litegraph .dialog .btn {
@@ -428,7 +428,7 @@
   border-radius: 10px;
   width: 12px;
   height: 12px;
-  background-color: #666;
+  background-color: var(--color-border-strong);
   display: inline-block;
   margin-top: 2px;
   margin-right: 4px;
@@ -437,7 +437,7 @@
 }
 
 .litegraph .bullet_icon:hover {
-  background-color: #698;
+  background-color: var(--color-action);
   cursor: pointer;
 }
 
@@ -449,8 +449,8 @@
 }
 
 .graphcontextmenu-title {
-  color: #dde;
-  background-color: #222;
+  color: var(--color-text);
+  background-color: var(--color-bg);
   margin: 0;
   padding: 2px;
   cursor: default;
@@ -468,7 +468,7 @@
 
 .graphmenu-entry.event,
 .litemenu-entry.event {
-  border-left: 8px solid orange;
+  border-left: 8px solid var(--color-warning);
   padding-left: 12px;
 }
 
@@ -487,11 +487,11 @@
 }
 
 .graphmenu-entry.submenu {
-  border-right: 2px solid #eee;
+  border-right: 2px solid var(--color-text);
 }
 
 .graphmenu-entry:hover {
-  background-color: #555;
+  background-color: var(--color-surface-alt);
 }
 
 .graphmenu-entry.separator {
@@ -512,7 +512,7 @@
 .graphmenu-entry .property_value,
 .litemenu-entry .property_value {
   display: inline-block;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--color-surface-alt);
   text-align: right;
   min-width: 80px;
   min-height: 1.2em;
@@ -525,9 +525,9 @@
   top: 10px;
   left: 10px;
   min-height: 2em;
-  background-color: #333;
+  background-color: var(--color-surface);
   font-size: 1.2em;
-  box-shadow: 0 0 10px black;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.5);
   z-index: 10;
 }
 
@@ -549,9 +549,9 @@
   margin: 3px;
   min-width: 60px;
   min-height: 1.5em;
-  background-color: black;
+  background-color: var(--color-surface-alt);
   border: 0;
-  color: white;
+  color: var(--color-text);
   padding-left: 10px;
   outline: none;
 }
@@ -563,7 +563,7 @@
 .graphdialog button {
   margin-top: 3px;
   vertical-align: top;
-  background-color: #999;
+  background-color: var(--color-text-muted);
   border: 0;
 }
 
@@ -584,8 +584,8 @@
 .graphdialog .help-item:hover,
 .graphdialog .help-item.selected {
   cursor: pointer;
-  background-color: white;
-  color: black;
+  background-color: var(--color-action);
+  color: var(--color-action-fg);
 }
 
 .litegraph .dialog {
