@@ -6,20 +6,20 @@ import { useSettingStore } from '@/platform/settings/settingStore'
 import { useWorkflowStore } from '@/platform/workflow/management/stores/workflowStore'
 import { useCanvasStore } from '@/renderer/core/canvas/canvasStore'
 
-import { useCanvasRefresh } from './useCanvasRefresh'
 import type { MenuOption } from './useMoreOptionsMenu'
-import { useNodeCustomization } from './useNodeCustomization'
 
 /**
- * Composable for group-related menu operations
+ * Composable for group-related menu operations.
+ *
+ * Lite fork: Shape and Color submenus removed with V1 drop. They
+ * operated on V1 node properties (`node.shape`, `node.color`) that
+ * V2 nodes don't use.
  */
 export function useGroupMenuOptions() {
   const { t } = useI18n()
   const canvasStore = useCanvasStore()
   const workflowStore = useWorkflowStore()
   const settingStore = useSettingStore()
-  const canvasRefresh = useCanvasRefresh()
-  const { shapeOptions, colorOptions, isLightTheme } = useNodeCustomization()
 
   const getFitGroupToNodesOption = (groupContext: LGraphGroup): MenuOption => ({
     label: 'Fit Group To Nodes',
@@ -38,46 +38,6 @@ export function useGroupMenuOptions() {
       canvasStore.canvas?.setDirty(true, true)
       workflowStore.activeWorkflow?.changeTracker?.captureCanvasState()
     }
-  })
-
-  const getGroupShapeOptions = (
-    groupContext: LGraphGroup,
-    bump: () => void
-  ): MenuOption => ({
-    label: t('contextMenu.Shape'),
-    icon: 'icon-[lucide--box]',
-    hasSubmenu: true,
-    submenu: shapeOptions.map((shape) => ({
-      label: shape.localizedName,
-      action: () => {
-        const nodes = (groupContext.nodes || []) as LGraphNode[]
-        nodes.forEach((node) => (node.shape = shape.value))
-        canvasRefresh.refreshCanvas()
-        bump()
-      }
-    }))
-  })
-
-  const getGroupColorOptions = (
-    groupContext: LGraphGroup,
-    bump: () => void
-  ): MenuOption => ({
-    label: t('contextMenu.Color'),
-    icon: 'icon-[lucide--palette]',
-    hasSubmenu: true,
-    submenu: colorOptions.map((colorOption) => ({
-      label: colorOption.localizedName,
-      color: isLightTheme.value
-        ? colorOption.value.light
-        : colorOption.value.dark,
-      action: () => {
-        groupContext.color = isLightTheme.value
-          ? colorOption.value.light
-          : colorOption.value.dark
-        canvasRefresh.refreshCanvas()
-        bump()
-      }
-    }))
   })
 
   const getGroupModeOptions = (
@@ -189,8 +149,6 @@ export function useGroupMenuOptions() {
 
   return {
     getFitGroupToNodesOption,
-    getGroupShapeOptions,
-    getGroupColorOptions,
     getGroupModeOptions
   }
 }

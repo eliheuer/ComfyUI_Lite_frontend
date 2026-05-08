@@ -19,7 +19,6 @@
         <VerticalDivider v-if="showInfoButton && showAnyPrimaryActions" />
         <InfoButton v-if="showInfoButton" />
 
-        <ColorPickerButton v-if="showColorPicker" />
         <FrameNodes v-if="showFrameNodes" />
         <ConvertToSubgraphButton v-if="showConvertToSubgraph" />
         <ConfigureSubgraph v-if="showSubgraphButtons" />
@@ -50,7 +49,6 @@ import Panel from 'primevue/panel'
 import { computed, ref } from 'vue'
 
 import BypassButton from '@/components/graph/selectionToolbox/BypassButton.vue'
-import ColorPickerButton from '@/components/graph/selectionToolbox/ColorPickerButton.vue'
 import ConfigureSubgraph from '@/components/graph/selectionToolbox/ConfigureSubgraph.vue'
 import ConvertToSubgraphButton from '@/components/graph/selectionToolbox/ConvertToSubgraphButton.vue'
 import DeleteButton from '@/components/graph/selectionToolbox/DeleteButton.vue'
@@ -109,7 +107,6 @@ const {
 } = useSelectionState()
 const showInfoButton = computed(() => !!nodeDef.value)
 
-const showColorPicker = computed(() => hasAnySelection.value)
 const showConvertToSubgraph = computed(() => hasAnySelection.value)
 const showFrameNodes = computed(() => hasMultipleSelection.value)
 const showSubgraphButtons = computed(() => isSingleSubgraph.value)
@@ -127,7 +124,6 @@ const showExecute = computed(() => hasOutputNodesSelected.value)
 
 const showAnyPrimaryActions = computed(
   () =>
-    showColorPicker.value ||
     showConvertToSubgraph.value ||
     showFrameNodes.value ||
     showSubgraphButtons.value
