@@ -1,15 +1,13 @@
-import _ from 'es-toolkit/compat'
 
 import { isPromotedWidgetView } from '@/core/graph/subgraph/promotedWidgetTypes'
-import type { ColorOption, LGraph } from '@/lib/litegraph/src/litegraph'
+import type { LGraph } from '@/lib/litegraph/src/litegraph'
 import type { ExecutedWsMessage } from '@/schemas/apiSchema'
 import {
   LGraphCanvas,
   LGraphGroup,
   LGraphNode,
   LiteGraph,
-  Reroute,
-  isColorable
+  Reroute
 } from '@/lib/litegraph/src/litegraph'
 import type {
   ExportedSubgraph,
@@ -136,24 +134,6 @@ export const isLGraphGroup = (item: unknown): item is LGraphGroup => {
 
 export const isReroute = (item: unknown): item is Reroute => {
   return item instanceof Reroute
-}
-
-/**
- * Get the color option of all canvas items if they are all the same.
- * @param items - The items to get the color option of.
- * @returns The color option of the item.
- */
-export const getItemsColorOption = (items: unknown[]): ColorOption | null => {
-  const validItems = _.filter(items, isColorable)
-  if (_.isEmpty(validItems)) return null
-
-  const colorOptions = _.map(validItems, (item) => item.getColorOption())
-
-  return _.every(colorOptions, (option) =>
-    _.isEqual(option, _.head(colorOptions))
-  )
-    ? _.head(colorOptions)!
-    : null
 }
 
 export function executeWidgetsCallback(
