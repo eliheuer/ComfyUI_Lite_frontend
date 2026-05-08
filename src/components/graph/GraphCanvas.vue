@@ -186,7 +186,6 @@ import { UnauthorizedError } from '@/scripts/api'
 import { app as comfyApp } from '@/scripts/app'
 import { ChangeTracker } from '@/scripts/changeTracker'
 import { IS_CONTROL_WIDGET, updateControlWidgetLabel } from '@/scripts/widgets'
-import { useColorPaletteService } from '@/services/colorPaletteService'
 import { useNewUserService } from '@/services/useNewUserService'
 import { shouldIgnoreCopyPaste } from '@/workbench/eventHelpers'
 import { storeToRefs } from 'pinia'
@@ -197,7 +196,6 @@ import { useExecutionStore } from '@/stores/executionStore'
 import { useExecutionErrorStore } from '@/stores/executionErrorStore'
 import { useNodeDefStore } from '@/stores/nodeDefStore'
 import { useDarkMood } from '@/composables/useColorScheme'
-import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
 import { useSearchBoxStore } from '@/stores/workspace/searchBoxStore'
 import { useAppMode } from '@/composables/useAppMode'
 import { useWorkspaceStore } from '@/stores/workspaceStore'
@@ -227,9 +225,7 @@ const { linearMode } = storeToRefs(canvasStore)
 const executionStore = useExecutionStore()
 const executionErrorStore = useExecutionErrorStore()
 const toastStore = useToastStore()
-const colorPaletteStore = useColorPaletteStore()
 const isDarkMood = useDarkMood()
-const colorPaletteService = useColorPaletteService()
 const canvasInteractions = useCanvasInteractions()
 const bootstrapStore = useBootstrapStore()
 const { isI18nReady, i18nError } = storeToRefs(bootstrapStore)
@@ -377,34 +373,10 @@ watch(
   }
 )
 
-watch(
-  [() => canvasStore.canvas, () => settingStore.get('Comfy.ColorPalette')],
-  async ([canvas, currentPaletteId]) => {
-    if (!canvas) return
-
-    await colorPaletteService.loadColorPalette(currentPaletteId)
-  }
-)
-
-watch(
-  () => settingStore.get('Comfy.Canvas.BackgroundImage'),
-  async () => {
-    if (!canvasStore.canvas) return
-    const currentPaletteId = colorPaletteStore.activePaletteId
-    if (!currentPaletteId) return
-
-    // Reload color palette to apply background image
-    await colorPaletteService.loadColorPalette(currentPaletteId)
-    // Mark background canvas as dirty
-    canvasStore.canvas.setDirty(false, true)
-  }
-)
-watch(
-  () => colorPaletteStore.activePaletteId,
-  async (newValue) => {
-    await settingStore.set('Comfy.ColorPalette', newValue)
-  }
-)
+// Lite fork: legacy palette watches removed (V1 drop). Theme is
+// driven by useColorScheme + themeBridge; the legacy
+// colorPaletteService.loadColorPalette was already no-op and the
+// activePaletteId/Comfy.ColorPalette setting has no effect.
 
 /**
  * Propagates execution progress from the store to LiteGraph node objects
@@ -563,11 +535,6 @@ onMounted(async () => {
   comfyApp.canvas.onSelectionChange = useChainCallback(
     comfyApp.canvas.onSelectionChange,
     () => canvasStore.updateSelectedItems()
-  )
-
-  // Load color palette
-  colorPaletteStore.customPalettes = settingStore.get(
-    'Comfy.CustomColorPalettes'
   )
 
   // Restore saved workflow and workflow tabs state
