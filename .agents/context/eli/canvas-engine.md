@@ -39,10 +39,10 @@ Existing-file touchpoints across all phases (cumulative):
 
 - `src/lite/registerLite.ts` — new feature registers itself here
   (Lite-only file, never conflicts)
-- One toolbar button in a graph-mode toolbar component (Phase 2)
-- One app-mode cell registration (Phase 3 — PR territory; deferred)
+- One toolbar button in a graph-mode toolbar component (Phase 4)
+- One app-mode cell registration (Phase 5 — PR territory; deferred to last)
 
-Phases 1 and 4-5 have **zero existing-file touchpoints**.
+Phases 1–3 have **zero existing-file touchpoints**.
 
 ## What already exists in this codebase (and what we steal)
 
@@ -97,11 +97,11 @@ crates/lite-canvas/
     history.rs            # undo/redo with delta-based events
     tools/
       sketch.rs           # brush + eraser + stroke smoothing (Phase 1)
-      composite.rs        # blend modes + filters (Phase 4)
-      vector.rs           # bezier paths (Phase 5; merges with svg-editor plan)
+      vector.rs           # bezier paths (Phase 2; merges with svg-editor plan)
+      composite.rs        # blend modes + filters (Phase 3)
     io/
       png.rs              # raster export
-      svg.rs              # vector export (Phase 5)
+      svg.rs              # vector export (Phase 2)
 ```
 
 ### WASM ↔ JS boundary (sketch)
@@ -115,7 +115,7 @@ handle.undo()
 handle.redo()
 handle.clear()
 handle.export_png() -> Uint8Array
-handle.export_svg() -> string  // Phase 5
+handle.export_svg() -> string  // Phase 2
 handle.dispose()
 ```
 
