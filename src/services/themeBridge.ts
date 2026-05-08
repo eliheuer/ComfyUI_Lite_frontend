@@ -11,26 +11,14 @@ function applyToLiteGraph() {
   const canvas = app.canvas
   if (!canvas) return
 
-  // Properties on the running LGraphCanvas instance
+  // Canvas-level properties — used for canvas background and link
+  // (cable) rendering between V2 nodes.
   canvas.clear_background_color = readVar('--color-canvas-bg')
   canvas.default_link_color = readVar('--color-border')
-  canvas.node_title_color = readVar('--color-node-header')
 
-  // Namespace constants — Tier 1 compat for any extension that still
-  // draws on the canvas and reads these values directly. New code
-  // should reference --color-* tokens via CSS instead.
-  Object.assign(LiteGraph, {
-    NODE_DEFAULT_BGCOLOR: readVar('--color-node-bg'),
-    NODE_DEFAULT_COLOR: readVar('--color-node-border'),
-    NODE_TITLE_COLOR: readVar('--color-node-header'),
-    NODE_TEXT_COLOR: readVar('--color-node-text'),
-    NODE_BOX_OUTLINE_COLOR: readVar('--color-text'),
-    NODE_ERROR_COLOUR: readVar('--color-node-error'),
-    LINK_COLOR: readVar('--color-border'),
-    WIDGET_BGCOLOR: readVar('--color-surface-alt'),
-    WIDGET_TEXT_COLOR: readVar('--color-text'),
-    WIDGET_OUTLINE_COLOR: readVar('--color-border')
-  })
+  // LINK_COLOR namespace constant — used by some link-drawing code
+  // paths and any extension that draws on the canvas.
+  LiteGraph.LINK_COLOR = readVar('--color-border')
 
   canvas.draw(true, true)
 }
@@ -38,7 +26,11 @@ function applyToLiteGraph() {
 /**
  * Wires the theme system to the LiteGraph canvas: every time the
  * active theme changes, reads CSS-var values from :root and pushes
- * them into LiteGraph's runtime constants, then redraws.
+ * them into the canvas + LiteGraph link color, then redraws.
+ *
+ * Lite fork: simplified after V1 nodes were dropped — per-node color
+ * constants (`NODE_DEFAULT_BGCOLOR`, `NODE_TITLE_COLOR`, etc.) are no
+ * longer set, since V2 nodes are Vue components and don't read them.
  *
  * Call once after the LGraphCanvas instance exists. Safe to call
  * multiple times (the watcher is idempotent under HMR).
