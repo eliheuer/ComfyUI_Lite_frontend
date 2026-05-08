@@ -1,5 +1,5 @@
 import { useStorage } from '@vueuse/core'
-import { watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 
 const STORAGE_KEY = 'lite-color-scheme'
 
@@ -31,6 +31,18 @@ const THEME_MOODS: Record<Theme, Mood> = {
 
 const theme = useStorage<Theme>(STORAGE_KEY, DEFAULT_THEME)
 
+const isDarkMood = ref<boolean>(THEME_MOODS[DEFAULT_THEME] === 'dark')
+
+/**
+ * Reactive ref that tracks whether the active theme (built-in or user)
+ * is in dark mood. Replaces the legacy
+ * `colorPaletteStore.completedActivePalette.light_theme` check —
+ * use `!useDarkMood().value` for the legacy polarity.
+ */
+export function useDarkMood() {
+  return isDarkMood
+}
+
 /**
  * Toggle the `.dark-theme` body class. The `@comfyorg/design-system`
  * package gates its dark-mode tokens behind this class via a
@@ -40,6 +52,7 @@ const theme = useStorage<Theme>(STORAGE_KEY, DEFAULT_THEME)
 export function setBodyMood(mood: Mood) {
   if (typeof document === 'undefined' || !document.body) return
   document.body.classList.toggle('dark-theme', mood === 'dark')
+  isDarkMood.value = mood === 'dark'
 }
 
 /** Read the current built-in theme's mood. Used by the user-theme
