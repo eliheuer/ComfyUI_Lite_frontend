@@ -212,6 +212,38 @@
   --p-list-option-background-focus: var(--color-surface-alt);
   --p-list-option-color: var(--color-text);
   --p-list-option-color-focus: var(--color-text);
+
+  /* Design-system semantic token bridges (packages/design-system/
+   * src/css/style.css). Tailwind utility classes like
+   * `bg-secondary-background`, `text-base-foreground`,
+   * `border-border-default`, etc. resolve through these. Bridging
+   * here drives ~1000+ component usages from our role tokens. */
+  --base-background: var(--color-bg);
+  --base-foreground: var(--color-text);
+  --secondary-background: var(--color-surface);
+  --secondary-background-hover: var(--color-surface-alt);
+  --secondary-background-selected: var(--color-surface-alt);
+  --muted-background: var(--color-surface-alt);
+  --muted-foreground: var(--color-text-muted);
+  --accent-background: var(--color-surface-alt);
+  --border-default: var(--color-border);
+  --border-subtle: var(--color-border);
+  --interface-stroke: var(--color-border);
+  --inverted-background-hover: var(--color-surface-alt);
+
+  --primary-background: var(--color-action);
+  --primary-background-hover: var(--color-action);
+  --primary-foreground: var(--color-action-fg);
+
+  --destructive-background: var(--color-danger);
+  --destructive-background-hover: var(--color-danger);
+  --destructive-foreground: var(--color-danger-fg);
+
+  --warning-background: var(--color-warning);
+  --warning-background-hover: var(--color-warning);
+
+  --brand-yellow: var(--color-action);
+  --brand-blue: var(--color-action);
 }
 
 /* ============================================================
