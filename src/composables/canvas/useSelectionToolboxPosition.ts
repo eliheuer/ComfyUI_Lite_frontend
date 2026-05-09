@@ -3,7 +3,6 @@ import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
 import type { Ref } from 'vue'
 
 import { useSelectedLiteGraphItems } from '@/composables/canvas/useSelectedLiteGraphItems'
-import { useVueFeatureFlags } from '@/composables/useVueFeatureFlags'
 import type { ReadOnlyRect } from '@/lib/litegraph/src/interfaces'
 import {
   LGraphGroup,
@@ -54,7 +53,6 @@ export function useSelectionToolboxPosition(
   const canvasStore = useCanvasStore()
   const lgCanvas = canvasStore.getCanvas()
   const { getSelectableItems } = useSelectedLiteGraphItems()
-  const { shouldRenderVueNodes } = useVueFeatureFlags()
 
   // World position of selection center
   const worldPosition = ref({ x: 0, y: 0 })
@@ -69,8 +67,7 @@ export function useSelectionToolboxPosition(
   // Unified dragging state - combines both LiteGraph and Vue node dragging
   const isDragging = computed((): boolean => {
     const litegraphDragging = canvasStore.canvas?.state?.draggingItems ?? false
-    const vueNodeDragging =
-      shouldRenderVueNodes.value && layoutStore.isDraggingVueNodes.value
+    const vueNodeDragging = layoutStore.isDraggingVueNodes.value
     return litegraphDragging || vueNodeDragging
   })
 
@@ -99,7 +96,7 @@ export function useSelectionToolboxPosition(
       // Skip items without valid IDs
       if (item.id == null) continue
 
-      if (shouldRenderVueNodes.value && typeof item.id === 'string') {
+      if (typeof item.id === 'string') {
         // Use layout store for Vue nodes (only works with string IDs)
         const layout = layoutStore.getNodeLayoutRef(item.id).value
         if (layout) {

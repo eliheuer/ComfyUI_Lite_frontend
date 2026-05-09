@@ -5,7 +5,6 @@ import { useI18n } from 'vue-i18n'
 import { useCurrentUser } from '@/composables/auth/useCurrentUser'
 import { useBillingContext } from '@/composables/billing/useBillingContext'
 import { useFeatureFlags } from '@/composables/useFeatureFlags'
-import { useVueFeatureFlags } from '@/composables/useVueFeatureFlags'
 import { isCloud, isDesktop } from '@/platform/distribution/types'
 import {
   getSettingInfo,
@@ -52,7 +51,6 @@ export function useSettingUI(
   const activeCategory = ref<SettingTreeNode | null>(null)
 
   const { flags } = useFeatureFlags()
-  const { shouldRenderVueNodes } = useVueFeatureFlags()
   const { isActiveSubscription } = useBillingContext()
 
   const teamWorkspacesEnabled = computed(
@@ -63,8 +61,7 @@ export function useSettingUI(
     const root = buildTree(
       Object.values(settingStore.settingsById).filter(
         (setting: SettingParams) =>
-          setting.type !== 'hidden' &&
-          !(shouldRenderVueNodes.value && setting.hideInVueNodes)
+          setting.type !== 'hidden' && !setting.hideInVueNodes
       ),
       (setting: SettingParams) => setting.category || setting.id.split('.')
     )

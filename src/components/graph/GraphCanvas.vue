@@ -64,7 +64,7 @@
 
   <!-- TransformPane for Vue node rendering -->
   <TransformPane
-    v-if="shouldRenderVueNodes && comfyApp.canvas && comfyAppReady"
+    v-if="comfyApp.canvas && comfyAppReady"
     :canvas="comfyApp.canvas"
     @wheel.capture="canvasInteractions.forwardEventToCanvas"
     @pointerdown.capture="forwardPanEvent"
@@ -86,7 +86,7 @@
   </TransformPane>
 
   <LinkOverlayCanvas
-    v-if="shouldRenderVueNodes && comfyApp.canvas && comfyAppReady"
+    v-if="comfyApp.canvas && comfyAppReady"
     :canvas="comfyApp.canvas"
     @ready="onLinkOverlayReady"
     @dispose="onLinkOverlayDispose"
@@ -117,8 +117,6 @@
     <TitleEditor />
     <SelectionToolbox v-if="selectionToolboxEnabled" />
     <NodeContextMenu />
-    <!-- Render legacy DOM widgets only when Vue nodes are disabled -->
-    <DomWidgets v-if="!shouldRenderVueNodes" />
   </template>
 </template>
 
@@ -142,7 +140,6 @@ import TopMenuSection from '@/components/TopMenuSection.vue'
 import BottomPanel from '@/components/bottomPanel/BottomPanel.vue'
 import VueNodeSwitchPopup from '@/components/builder/VueNodeSwitchPopup.vue'
 import ExtensionSlot from '@/components/common/ExtensionSlot.vue'
-import DomWidgets from '@/components/graph/DomWidgets.vue'
 import GraphCanvasMenu from '@/components/graph/GraphCanvasMenu.vue'
 import LinkOverlayCanvas from '@/components/graph/LinkOverlayCanvas.vue'
 import NodeTooltip from '@/components/graph/NodeTooltip.vue'
@@ -165,7 +162,6 @@ import { useContextMenuTranslation } from '@/composables/useContextMenuTranslati
 import { useCopy } from '@/composables/useCopy'
 import { useGlobalLitegraph } from '@/composables/useGlobalLitegraph'
 import { usePaste } from '@/composables/usePaste'
-import { useVueFeatureFlags } from '@/composables/useVueFeatureFlags'
 import { LiteGraph } from '@/lib/litegraph/src/litegraph'
 import { useLitegraphSettings } from '@/platform/settings/composables/useLitegraphSettings'
 import { CORE_SETTINGS } from '@/platform/settings/constants/coreSettings'
@@ -254,9 +250,6 @@ const showUI = computed(
 
 const minimapEnabled = computed(() => settingStore.get('Comfy.Minimap.Visible'))
 
-// Feature flags
-const { shouldRenderVueNodes } = useVueFeatureFlags()
-
 // Vue node system
 const vueNodeLifecycle = useVueNodeLifecycle()
 
@@ -271,11 +264,9 @@ watch(
 )
 
 const handleVueNodeLifecycleReset = async () => {
-  if (shouldRenderVueNodes.value) {
-    vueNodeLifecycle.disposeNodeManagerAndSyncs()
-    await nextTick()
-    vueNodeLifecycle.initializeNodeManager()
-  }
+  vueNodeLifecycle.disposeNodeManagerAndSyncs()
+  await nextTick()
+  vueNodeLifecycle.initializeNodeManager()
 }
 
 watch(() => canvasStore.currentGraph, handleVueNodeLifecycleReset)
@@ -296,8 +287,6 @@ const allNodes = computed((): VueNodeData[] =>
 watch(
   () => linearMode.value,
   (isLinearMode) => {
-    if (!shouldRenderVueNodes.value) return
-
     if (isLinearMode) {
       layoutStore.clearAllSlotLayouts()
     } else {
