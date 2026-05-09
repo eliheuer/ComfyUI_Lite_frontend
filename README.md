@@ -10,6 +10,62 @@ This is Eli's opinionated fork of the [ComfyUI frontend](https://github.com/Comf
 
 <img width="2560" height="1440" alt="Image" src="https://github.com/user-attachments/assets/0230bd37-224a-4a21-a6a1-e4185868c57d" />
 
+## What's different from upstream
+
+- **One-layer theme system.** Replaces upstream's five-layered color
+  setup (palette JSONs, runtime service, Pinia store, schema, etc.)
+  with a single `src/styles/tokens.css` plus a tiny composable. Every
+  theme is just a CSS block. The whole color system fits in one file
+  you can read top to bottom.
+- **7 built-in themes.** Dark (default), Light, Gray (Win95-ish silver),
+  Strawberry (cute pink), Mint (fresh green), Campfire (warm dark),
+  Rainforest (mossy dark). Switch via Settings → Appearance or the
+  toolbar dropdown.
+- **User themes are CSS files.** Drop a `.css` file in
+  `<ComfyUI>/user/default/themes/` and it shows up in the theme menu.
+  No JSON, no runtime parser, no plugin install — just CSS. Examples
+  in [`examples/themes/`](examples/themes/) (gruvbox, nord, tokyo
+  night).
+- **V2 nodes only.** Upstream's V1 canvas-rendered node code is gone;
+  V2 (Vue-rendered DOM) is the only mode. ~3000 lines deleted across
+  the V1 stack, theme stack, and supporting infra.
+- **Most upstream automation removed.** GitHub Actions trimmed from 47
+  to 10 — only the CI quality checks (lint, tests, validation) remain.
+  Release pipelines, Vercel preview, Slack notify, Comfy-Org cloud
+  dispatch, etc. all gone.
+- **Tracks PR #11317 by rebase.** Periodic `./scripts/sync-pr.sh`
+  pulls upstream's app-mode-customizable-layout branch and replays
+  fork-specific commits on top.
+
+## Quick start
+
+Runs against a local ComfyUI backend.
+
+```bash
+# 1. Install + start the dev server
+pnpm install
+pnpm dev
+
+# 2. (Separately) make sure ComfyUI is running on :8188
+cd ~/Comfy/repos/ComfyUI && uv run python main.py
+
+# 3. Open the chromeless dev window with isolated profile
+./scripts/dev-window.sh
+```
+
+For the full upstream development setup (Storybook, Playwright
+testing, etc.), see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Themes
+
+> _TODO: gallery of all 7 themes — Eli to add screenshots when polishing._
+
+Built-in themes live in
+[`src/styles/tokens.css`](src/styles/tokens.css). Add your own by
+dropping a CSS file in `<ComfyUI>/user/default/themes/` — see
+[`examples/themes/README.md`](examples/themes/README.md) for the
+format.
+
 ---
 
 <div align="center">
