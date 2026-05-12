@@ -5,6 +5,7 @@
       :nodes="targetNodes"
       @changed="handleChanged"
     />
+    <SetNodeColor :nodes="targetNodes" @changed="handleChanged" />
     <SetPinned :nodes="targetNodes" @changed="handleChanged" />
   </div>
 </template>
@@ -16,6 +17,7 @@ import type { LGraphGroup, LGraphNode } from '@/lib/litegraph/src/litegraph'
 import { useCanvasStore } from '@/renderer/core/canvas/canvasStore'
 import { isLGraphGroup } from '@/utils/litegraphUtil'
 
+import SetNodeColor from './SetNodeColor.vue'
 import SetNodeState from './SetNodeState.vue'
 import SetPinned from './SetPinned.vue'
 

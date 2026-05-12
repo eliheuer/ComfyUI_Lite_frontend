@@ -8,6 +8,7 @@ import {
 } from '@/platform/settings/settingStore'
 import type { ISettingGroup, SettingParams } from '@/platform/settings/types'
 import { normalizeI18nKey } from '@/utils/formatUtil'
+import { useVueFeatureFlags } from '@/composables/useVueFeatureFlags'
 
 interface SearchableNavItem {
   key: string
@@ -16,6 +17,7 @@ interface SearchableNavItem {
 
 export function useSettingSearch() {
   const settingStore = useSettingStore()
+  const { shouldRenderVueNodes } = useVueFeatureFlags()
 
   const searchQuery = ref<string>('')
   const filteredSettingIds = ref<string[]>([])
@@ -65,7 +67,7 @@ export function useSettingSearch() {
       if (
         setting.type === 'hidden' ||
         setting.deprecated ||
-        setting.hideInVueNodes
+        (shouldRenderVueNodes.value && setting.hideInVueNodes)
       ) {
         return false
       }

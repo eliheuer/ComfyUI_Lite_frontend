@@ -52,6 +52,8 @@ const config: KnipConfig = {
     'packages/ingest-types/src/zod.gen.ts',
     // Pending integration in stacked PR
     'src/components/sidebar/tabs/nodeLibrary/CustomNodesPanel.vue',
+    // ColorPaletteMessage replaced by ColorSchemeMenu; deleted in step 3
+    'src/platform/settings/components/ColorPaletteMessage.vue',
     // Marketing media tooling — adopted by pages in a follow-up PR
     'apps/website/src/components/common/SiteVideo.vue',
     'apps/website/src/utils/marketingImage.ts',

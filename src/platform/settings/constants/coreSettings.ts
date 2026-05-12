@@ -2,6 +2,7 @@ import { LinkMarkerShape, LiteGraph } from '@/lib/litegraph/src/litegraph'
 import { isCloud, isNightly } from '@/platform/distribution/types'
 import { useSettingStore } from '@/platform/settings/settingStore'
 import type { SettingParams } from '@/platform/settings/types'
+import type { ColorPalettes } from '@/schemas/colorPaletteSchema'
 import type { Keybinding } from '@/platform/keybindings/types'
 import { NodeBadgeMode } from '@/types/nodeSource'
 import { LinkReleaseTriggerAction } from '@/types/searchBoxTypes'
@@ -962,7 +963,7 @@ export const CORE_SETTINGS: SettingParams[] = [
     id: 'Comfy.CustomColorPalettes',
     name: 'Custom color palettes',
     type: 'hidden',
-    defaultValue: {} as Record<string, unknown>,
+    defaultValue: {} as ColorPalettes,
     versionModified: '1.6.7'
   },
   {

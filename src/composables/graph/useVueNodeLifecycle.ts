@@ -1,8 +1,9 @@
-import { createSharedComposable } from '@vueuse/core'
+import { createSharedComposable, whenever } from '@vueuse/core'
 import { shallowRef, watch } from 'vue'
 
 import { useGraphNodeManager } from '@/composables/graph/useGraphNodeManager'
 import type { GraphNodeManager } from '@/composables/graph/useGraphNodeManager'
+import { useVueFeatureFlags } from '@/composables/useVueFeatureFlags'
 import type { LGraphNode } from '@/lib/litegraph/src/litegraph'
 import { useCanvasStore } from '@/renderer/core/canvas/canvasStore'
 import { useLayoutMutations } from '@/renderer/core/layout/operations/layoutMutations'
@@ -13,6 +14,7 @@ import { app as comfyApp } from '@/scripts/app'
 function useVueNodeLifecycleIndividual() {
   const canvasStore = useCanvasStore()
   const layoutMutations = useLayoutMutations()
+  const { shouldRenderVueNodes } = useVueFeatureFlags()
   const nodeManager = shallowRef<GraphNodeManager | null>(null)
   const { startSync, stopSync } = useLayoutSync()
 
@@ -70,11 +72,8 @@ function useVueNodeLifecycleIndividual() {
   }
 
   // Watch for Vue nodes enabled state changes
-  // Lite fork: V1 drop simplified the lifecycle. V2 nodes are always
-  // active; legacy `whenever(!shouldRenderVueNodes)` cleanup branch
-  // and the mode-toggle watcher are dead and removed.
   watch(
-    () => Boolean(comfyApp.canvas?.graph),
+    () => shouldRenderVueNodes.value && Boolean(comfyApp.canvas?.graph),
     (enabled) => {
       if (enabled) {
         initializeNodeManager()
@@ -83,10 +82,48 @@ function useVueNodeLifecycleIndividual() {
     { immediate: true }
   )
 
-  // Handle case where graph starts empty
+  whenever(
+    () => !shouldRenderVueNodes.value,
+    () => {
+      disposeNodeManagerAndSyncs()
+
+      // Force arrange() on all nodes so input.pos is computed before
+      // the first legacy drawConnections frame (which may run before
+      // drawNode on the foreground canvas).
+      const graph = comfyApp.canvas?.graph
+      if (!graph) {
+        comfyApp.canvas?.setDirty(true, true)
+        return
+      }
+      for (const node of graph._nodes) {
+        if (node.flags.collapsed) continue
+        try {
+          node.arrange()
+        } catch {
+          /* skip nodes not fully initialized */
+        }
+      }
+
+      comfyApp.canvas?.setDirty(true, true)
+    }
+  )
+
+  // Clear stale slot layouts when switching modes
+  watch(
+    () => shouldRenderVueNodes.value,
+    () => {
+      layoutStore.clearAllSlotLayouts()
+    }
+  )
+
+  // Handle case where Vue nodes are enabled but graph starts empty
   const setupEmptyGraphListener = () => {
     const activeGraph = comfyApp.canvas?.graph
-    if (nodeManager.value || activeGraph?._nodes.length !== 0) {
+    if (
+      !shouldRenderVueNodes.value ||
+      nodeManager.value ||
+      activeGraph?._nodes.length !== 0
+    ) {
       return
     }
     const originalOnNodeAdded = activeGraph.onNodeAdded
@@ -95,7 +132,7 @@ function useVueNodeLifecycleIndividual() {
       activeGraph.onNodeAdded = originalOnNodeAdded
 
       // Initialize node manager if needed
-      if (!nodeManager.value) {
+      if (shouldRenderVueNodes.value && !nodeManager.value) {
         initializeNodeManager()
       }
 

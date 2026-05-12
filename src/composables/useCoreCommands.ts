@@ -2,10 +2,14 @@ import { useCurrentUser } from '@/composables/auth/useCurrentUser'
 import { useAuthActions } from '@/composables/auth/useAuthActions'
 import { useSelectedLiteGraphItems } from '@/composables/canvas/useSelectedLiteGraphItems'
 import { useSubgraphOperations } from '@/composables/graph/useSubgraphOperations'
-import { useColorScheme, useDarkMood } from '@/composables/useColorScheme'
-import type { Theme } from '@/composables/useColorScheme'
+import { useDarkMood } from '@/composables/useColorScheme'
 import { useExternalLink } from '@/composables/useExternalLink'
 import { useModelSelectorDialog } from '@/composables/useModelSelectorDialog'
+import {
+  DEFAULT_DARK_COLOR_PALETTE,
+  DEFAULT_LIGHT_COLOR_PALETTE
+} from '@/constants/coreColorPalettes'
+
 import { tryToggleWidgetPromotion } from '@/core/graph/subgraph/promotionUtils'
 import { t } from '@/i18n'
 import {
@@ -46,6 +50,7 @@ import {
 import { useSubgraphNavigationStore } from '@/stores/subgraphNavigationStore'
 import { useSubgraphStore } from '@/stores/subgraphStore'
 import { useBottomPanelStore } from '@/stores/workspace/bottomPanelStore'
+import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
 import { useRightSidePanelStore } from '@/stores/workspace/rightSidePanelStore'
 import { useSearchBoxStore } from '@/stores/workspace/searchBoxStore'
 import { useWorkspaceStore } from '@/stores/workspaceStore'
@@ -73,6 +78,7 @@ export function useCoreCommands(): ComfyCommand[] {
   const workflowStore = useWorkflowStore()
   const settingsDialog = useSettingsDialog()
   const dialogService = useDialogService()
+  const colorPaletteStore = useColorPaletteStore()
   const authActions = useAuthActions()
   const toastStore = useToastStore()
   const canvasStore = useCanvasStore()
@@ -708,21 +714,19 @@ export function useCoreCommands(): ComfyCommand[] {
       label: 'Toggle Theme (Dark/Light)',
       versionAdded: '1.3.12',
       function: (() => {
-        // Lite fork: toggle between dark and light themes via the new
-        // useColorScheme system. Remembers the last picked theme of
-        // each mood, so toggling preserves user preference.
-        let previousDark: Theme = 'dark'
-        let previousLight: Theme = 'light'
+        let previousDarkTheme: string = DEFAULT_DARK_COLOR_PALETTE.id
+        let previousLightTheme: string = DEFAULT_LIGHT_COLOR_PALETTE.id
 
-        return () => {
-          const { theme: currentTheme } = useColorScheme()
-          const isDark = useDarkMood()
-          if (isDark.value) {
-            previousDark = currentTheme.value
-            currentTheme.value = previousLight
+        return async () => {
+          const settingStore = useSettingStore()
+          const isDarkMood = useDarkMood()
+          const theme = colorPaletteStore.completedActivePalette
+          if (!isDarkMood.value) {
+            previousLightTheme = theme.id
+            await settingStore.set('Comfy.ColorPalette', previousDarkTheme)
           } else {
-            previousLight = currentTheme.value
-            currentTheme.value = previousDark
+            previousDarkTheme = theme.id
+            await settingStore.set('Comfy.ColorPalette', previousLightTheme)
           }
         }
       })()

@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { LinkMarkerShape } from '@/lib/litegraph/src/litegraph'
 import { zNodeId } from '@/platform/workflow/validation/schemas/workflowSchema'
+import { colorPalettesSchema } from '@/schemas/colorPaletteSchema'
 import { zKeybinding } from '@/platform/keybindings/types'
 import { NodeBadgeMode } from '@/types/nodeSource'
 import { LinkReleaseTriggerAction } from '@/types/searchBoxTypes'
@@ -295,7 +296,7 @@ export type PreviewMethod = z.infer<typeof zPreviewMethod>
 
 const zSettings = z.object({
   'Comfy.ColorPalette': z.string(),
-  'Comfy.CustomColorPalettes': z.record(z.unknown()),
+  'Comfy.CustomColorPalettes': colorPalettesSchema,
   'Comfy.Canvas.BackgroundImage': z.string().optional(),
   'Comfy.ConfirmClear': z.boolean(),
   'Comfy.DevMode': z.boolean(),

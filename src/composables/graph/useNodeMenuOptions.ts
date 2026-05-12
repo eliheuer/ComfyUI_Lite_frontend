@@ -1,17 +1,18 @@
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import type { MenuOption } from './useMoreOptionsMenu'
+import { useNodeCustomization } from './useNodeCustomization'
 import { useSelectedNodeActions } from './useSelectedNodeActions'
 import type { NodeSelectionState } from './useSelectionState'
 
 /**
- * Composable for node-related menu operations.
- *
- * Lite fork: Shape and Color submenus removed with V1 drop. V2 nodes
- * are CSS-styled, not per-node configured.
+ * Composable for node-related menu operations
  */
 export function useNodeMenuOptions() {
   const { t } = useI18n()
+  const { shapeOptions, applyShape, applyColor, colorOptions, isLightTheme } =
+    useNodeCustomization()
   const {
     adjustNodeSize,
     toggleNodeCollapse,
@@ -19,6 +20,24 @@ export function useNodeMenuOptions() {
     toggleNodeBypass,
     runBranch
   } = useSelectedNodeActions()
+
+  const shapeSubmenu = computed(() =>
+    shapeOptions.map((shape) => ({
+      label: shape.localizedName,
+      action: () => applyShape(shape)
+    }))
+  )
+
+  const colorSubmenu = computed(() => {
+    return colorOptions.map((colorOption) => ({
+      label: colorOption.localizedName,
+      color: isLightTheme.value
+        ? colorOption.value.light
+        : colorOption.value.dark,
+      action: () =>
+        applyColor(colorOption.name === 'noColor' ? null : colorOption)
+    }))
+  })
 
   const getAdjustSizeOption = (): MenuOption => ({
     label: t('contextMenu.Adjust Size'),
@@ -41,6 +60,21 @@ export function useNodeMenuOptions() {
         toggleNodeCollapse()
         bump()
       }
+    },
+    {
+      label: t('contextMenu.Shape'),
+      icon: 'icon-[lucide--box]',
+      hasSubmenu: true,
+      submenu: shapeSubmenu.value,
+      action: () => {}
+    },
+    {
+      label: t('contextMenu.Color'),
+      icon: 'icon-[lucide--palette]',
+      hasSubmenu: true,
+      submenu: colorSubmenu.value,
+      isColorPicker: true,
+      action: () => {}
     }
   ]
 
@@ -89,6 +123,7 @@ export function useNodeMenuOptions() {
     getNodeVisualOptions,
     getPinOption,
     getBypassOption,
-    getRunBranchOption
+    getRunBranchOption,
+    colorSubmenu
   }
 }

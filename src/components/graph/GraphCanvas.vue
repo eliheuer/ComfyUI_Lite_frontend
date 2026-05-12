@@ -64,7 +64,7 @@
 
   <!-- TransformPane for Vue node rendering -->
   <TransformPane
-    v-if="comfyApp.canvas && comfyAppReady"
+    v-if="shouldRenderVueNodes && comfyApp.canvas && comfyAppReady"
     :canvas="comfyApp.canvas"
     @wheel.capture="canvasInteractions.forwardEventToCanvas"
     @pointerdown.capture="forwardPanEvent"
@@ -86,7 +86,7 @@
   </TransformPane>
 
   <LinkOverlayCanvas
-    v-if="comfyApp.canvas && comfyAppReady"
+    v-if="shouldRenderVueNodes && comfyApp.canvas && comfyAppReady"
     :canvas="comfyApp.canvas"
     @ready="onLinkOverlayReady"
     @dispose="onLinkOverlayDispose"
@@ -117,6 +117,8 @@
     <TitleEditor />
     <SelectionToolbox v-if="selectionToolboxEnabled" />
     <NodeContextMenu />
+    <!-- Render legacy DOM widgets only when Vue nodes are disabled -->
+    <DomWidgets v-if="!shouldRenderVueNodes" />
   </template>
 </template>
 
@@ -140,6 +142,7 @@ import TopMenuSection from '@/components/TopMenuSection.vue'
 import BottomPanel from '@/components/bottomPanel/BottomPanel.vue'
 import VueNodeSwitchPopup from '@/components/builder/VueNodeSwitchPopup.vue'
 import ExtensionSlot from '@/components/common/ExtensionSlot.vue'
+import DomWidgets from '@/components/graph/DomWidgets.vue'
 import GraphCanvasMenu from '@/components/graph/GraphCanvasMenu.vue'
 import LinkOverlayCanvas from '@/components/graph/LinkOverlayCanvas.vue'
 import NodeTooltip from '@/components/graph/NodeTooltip.vue'
@@ -162,6 +165,7 @@ import { useContextMenuTranslation } from '@/composables/useContextMenuTranslati
 import { useCopy } from '@/composables/useCopy'
 import { useGlobalLitegraph } from '@/composables/useGlobalLitegraph'
 import { usePaste } from '@/composables/usePaste'
+import { useVueFeatureFlags } from '@/composables/useVueFeatureFlags'
 import { LiteGraph } from '@/lib/litegraph/src/litegraph'
 import { useLitegraphSettings } from '@/platform/settings/composables/useLitegraphSettings'
 import { CORE_SETTINGS } from '@/platform/settings/constants/coreSettings'
@@ -182,6 +186,7 @@ import { UnauthorizedError } from '@/scripts/api'
 import { app as comfyApp } from '@/scripts/app'
 import { ChangeTracker } from '@/scripts/changeTracker'
 import { IS_CONTROL_WIDGET, updateControlWidgetLabel } from '@/scripts/widgets'
+import { useColorPaletteService } from '@/services/colorPaletteService'
 import { useNewUserService } from '@/services/useNewUserService'
 import { shouldIgnoreCopyPaste } from '@/workbench/eventHelpers'
 import { storeToRefs } from 'pinia'
@@ -192,6 +197,7 @@ import { useExecutionStore } from '@/stores/executionStore'
 import { useExecutionErrorStore } from '@/stores/executionErrorStore'
 import { useNodeDefStore } from '@/stores/nodeDefStore'
 import { useDarkMood } from '@/composables/useColorScheme'
+import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
 import { useSearchBoxStore } from '@/stores/workspace/searchBoxStore'
 import { useAppMode } from '@/composables/useAppMode'
 import { useWorkspaceStore } from '@/stores/workspaceStore'
@@ -221,7 +227,9 @@ const { linearMode } = storeToRefs(canvasStore)
 const executionStore = useExecutionStore()
 const executionErrorStore = useExecutionErrorStore()
 const toastStore = useToastStore()
+const colorPaletteStore = useColorPaletteStore()
 const isDarkMood = useDarkMood()
+const colorPaletteService = useColorPaletteService()
 const canvasInteractions = useCanvasInteractions()
 const bootstrapStore = useBootstrapStore()
 const { isI18nReady, i18nError } = storeToRefs(bootstrapStore)
@@ -250,6 +258,9 @@ const showUI = computed(
 
 const minimapEnabled = computed(() => settingStore.get('Comfy.Minimap.Visible'))
 
+// Feature flags
+const { shouldRenderVueNodes } = useVueFeatureFlags()
+
 // Vue node system
 const vueNodeLifecycle = useVueNodeLifecycle()
 
@@ -264,9 +275,11 @@ watch(
 )
 
 const handleVueNodeLifecycleReset = async () => {
-  vueNodeLifecycle.disposeNodeManagerAndSyncs()
-  await nextTick()
-  vueNodeLifecycle.initializeNodeManager()
+  if (shouldRenderVueNodes.value) {
+    vueNodeLifecycle.disposeNodeManagerAndSyncs()
+    await nextTick()
+    vueNodeLifecycle.initializeNodeManager()
+  }
 }
 
 watch(() => canvasStore.currentGraph, handleVueNodeLifecycleReset)
@@ -287,6 +300,8 @@ const allNodes = computed((): VueNodeData[] =>
 watch(
   () => linearMode.value,
   (isLinearMode) => {
+    if (!shouldRenderVueNodes.value) return
+
     if (isLinearMode) {
       layoutStore.clearAllSlotLayouts()
     } else {
@@ -362,10 +377,34 @@ watch(
   }
 )
 
-// Lite fork: legacy palette watches removed (V1 drop). Theme is
-// driven by useColorScheme + themeBridge; the legacy
-// colorPaletteService.loadColorPalette was already no-op and the
-// activePaletteId/Comfy.ColorPalette setting has no effect.
+watch(
+  [() => canvasStore.canvas, () => settingStore.get('Comfy.ColorPalette')],
+  async ([canvas, currentPaletteId]) => {
+    if (!canvas) return
+
+    await colorPaletteService.loadColorPalette(currentPaletteId)
+  }
+)
+
+watch(
+  () => settingStore.get('Comfy.Canvas.BackgroundImage'),
+  async () => {
+    if (!canvasStore.canvas) return
+    const currentPaletteId = colorPaletteStore.activePaletteId
+    if (!currentPaletteId) return
+
+    // Reload color palette to apply background image
+    await colorPaletteService.loadColorPalette(currentPaletteId)
+    // Mark background canvas as dirty
+    canvasStore.canvas.setDirty(false, true)
+  }
+)
+watch(
+  () => colorPaletteStore.activePaletteId,
+  async (newValue) => {
+    await settingStore.set('Comfy.ColorPalette', newValue)
+  }
+)
 
 /**
  * Propagates execution progress from the store to LiteGraph node objects
@@ -524,6 +563,11 @@ onMounted(async () => {
   comfyApp.canvas.onSelectionChange = useChainCallback(
     comfyApp.canvas.onSelectionChange,
     () => canvasStore.updateSelectedItems()
+  )
+
+  // Load color palette
+  colorPaletteStore.customPalettes = settingStore.get(
+    'Comfy.CustomColorPalettes'
   )
 
   // Restore saved workflow and workflow tabs state

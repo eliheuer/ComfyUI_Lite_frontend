@@ -143,8 +143,11 @@ export function useMoreOptionsMenu() {
     getBypassOption,
     getRunBranchOption
   } = useNodeMenuOptions()
-  const { getFitGroupToNodesOption, getGroupModeOptions } =
-    useGroupMenuOptions()
+  const {
+    getFitGroupToNodesOption,
+    getGroupColorOptions,
+    getGroupModeOptions
+  } = useGroupMenuOptions()
   const {
     getBasicSelectionOptions,
     getMultipleNodesOptions,
@@ -239,9 +242,21 @@ export function useMoreOptionsMenu() {
     }
     options.push({ type: 'divider' })
 
-    // Section 4: Node info (Shape/Color removed with V1 drop)
+    // Section 4: Node properties (Node Info, Shape, Color)
     if (nodeDef.value) {
       options.push(getNodeInfoOption(showNodeHelp))
+    }
+    if (groupContext) {
+      options.push(getGroupColorOptions(groupContext, bump))
+    } else {
+      // Add shape and color options
+      const visualOptions = getNodeVisualOptions(states, bump)
+      if (visualOptions.length > 1) {
+        options.push(visualOptions[1]) // Shape (index 1)
+      }
+      if (visualOptions.length > 2) {
+        options.push(visualOptions[2]) // Color (index 2)
+      }
     }
     options.push({ type: 'divider' })
 

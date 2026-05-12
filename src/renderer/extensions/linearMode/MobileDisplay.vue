@@ -15,9 +15,11 @@ import { useCanvasStore } from '@/renderer/core/canvas/canvasStore'
 import LinearControls from '@/renderer/extensions/linearMode/LinearControls.vue'
 import LinearPreview from '@/renderer/extensions/linearMode/LinearPreview.vue'
 import MobileError from '@/renderer/extensions/linearMode/MobileError.vue'
+import { useColorPaletteService } from '@/services/colorPaletteService'
 import { useExecutionErrorStore } from '@/stores/executionErrorStore'
 import { useQueueStore } from '@/stores/queueStore'
 import { useMenuItemStore } from '@/stores/menuItemStore'
+import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
 import { cn } from '@comfyorg/tailwind-utils'
 
 const tabs = [
@@ -27,6 +29,8 @@ const tabs = [
 ]
 
 const canvasStore = useCanvasStore()
+const colorPaletteService = useColorPaletteService()
+const colorPaletteStore = useColorPaletteStore()
 const { isLoggedIn } = useCurrentUser()
 const executionErrorStore = useExecutionErrorStore()
 const { t } = useI18n()
@@ -123,6 +127,18 @@ const menuEntries = computed<MenuItem[]>(() => [
     icon: 'icon-[comfy--workflow]',
     new: true,
     command: () => (canvasStore.linearMode = false)
+  },
+  { separator: true },
+  {
+    label: t('menu.theme'),
+    items: colorPaletteStore.palettes.map((palette) => ({
+      label: palette.name,
+      icon:
+        colorPaletteStore.activePaletteId === palette.id
+          ? 'icon-[lucide--check]'
+          : '',
+      command: () => colorPaletteService.loadColorPalette(palette.id)
+    }))
   },
   { separator: true },
   {
